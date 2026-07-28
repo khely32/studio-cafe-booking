@@ -10,26 +10,26 @@
         display: flex; align-items: center; gap: 8px;
         padding: 10px 20px; border-radius: 100px;
         font-size: 13px; font-weight: 500; color: #bbb;
-        background: #fff; border: 1px solid #eee;
+        background: #fff; border: 1px solid var(--gray-200);
         transition: all 0.4s ease;
     }
     .step-pill.active {
-        background: var(--espresso); color: var(--gold);
-        border-color: var(--espresso);
-        box-shadow: 0 4px 16px rgba(26,26,26,0.2);
+        background: var(--gray-900); color: #fff;
+        border-color: var(--gray-900);
+        box-shadow: 0 4px 20px rgba(15,23,42,0.2);
     }
     .step-pill.done {
-        background: var(--cream-dark); color: var(--gold-dark);
-        border-color: var(--cream-dark);
+        background: var(--gray-100); color: var(--gray-600);
+        border-color: var(--gray-100);
     }
     .step-pill .num {
         width: 24px; height: 24px; border-radius: 50%;
         display: inline-flex; align-items: center; justify-content: center;
         font-size: 11px; font-weight: 700;
-        background: var(--cream-dark); color: var(--charcoal-light);
+        background: var(--gray-100); color: var(--gray-600);
     }
-    .step-pill.active .num { background: var(--gold); color: #fff; }
-    .step-pill.done .num { background: var(--gold-dark); color: #fff; }
+    .step-pill.active .num { background: var(--cafe); color: #fff; }
+    .step-pill.done .num { background: var(--cafe-dark); color: #fff; }
 
     .step { animation: fadeInUp 0.5s ease; }
 
@@ -39,46 +39,48 @@
         transition: all 0.3s ease; padding: 20px 24px;
         display: flex; justify-content: space-between; align-items: center;
     }
-    .pkg-card:hover { border-color: var(--gold-light); box-shadow: var(--shadow-md); }
-    .pkg-card.selected { border-color: var(--gold); background: #FFFDF9; box-shadow: 0 0 0 4px rgba(201,169,110,0.1); }
+    .pkg-card:hover { border-color: var(--cafe-light); box-shadow: var(--shadow-md); }
+    .pkg-card.selected {
+        border-color: var(--cafe); background: #FDF8F0;
+        box-shadow: 0 0 0 4px rgba(139,111,71,0.1);
+    }
     .pkg-card .pkg-name { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 16px; }
-    .pkg-card .pkg-meta { font-size: 13px; color: var(--charcoal-light); margin-top: 4px; }
-    .pkg-card .pkg-price { font-size: 20px; font-weight: 700; color: var(--gold-dark); font-family: 'Playfair Display', serif; }
-    .pkg-card .pkg-select { font-size: 12px; color: #bbb; margin-top: 4px; }
+    .pkg-card .pkg-meta { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+    .pkg-card .pkg-price { font-size: 20px; font-weight: 700; color: var(--cafe-dark); font-family: 'Playfair Display', serif; }
+    .pkg-card .pkg-select { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
 
     .cal-card {
         background: #fff; border-radius: var(--radius-lg);
-        border: 1px solid rgba(201,169,110,0.1);
+        border: 1px solid var(--gray-200);
         overflow: hidden; margin-bottom: 24px;
         box-shadow: var(--shadow-sm);
     }
     .cal-header {
         display: flex; justify-content: space-between; align-items: center;
         padding: 20px 24px;
-        background: linear-gradient(135deg, var(--espresso), #3a3028);
+        background: var(--gradient-4);
     }
     .cal-header h3 {
         font-family: 'Playfair Display', serif;
         font-size: 18px; color: #fff; font-weight: 600;
     }
     .cal-header button {
-        background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
         color: #fff; padding: 6px 14px; border-radius: 100px;
         cursor: pointer; font-size: 12px; font-family: 'DM Sans', sans-serif;
         transition: all 0.3s;
     }
-    .cal-header button:hover { background: rgba(255,255,255,0.2); }
+    .cal-header button:hover { background: rgba(255,255,255,0.25); }
 
-    .cal-grid {
-        padding: 16px 20px;
-    }
+    .cal-grid { padding: 16px 20px; }
     .cal-weekdays {
         display: grid; grid-template-columns: repeat(7,1fr); gap: 2px;
         margin-bottom: 8px;
     }
     .cal-weekdays div {
         text-align: center; font-size: 11px; font-weight: 600;
-        color: #bbb; padding: 6px 0; text-transform: uppercase; letter-spacing: 1px;
+        color: var(--gray-400); padding: 6px 0;
+        text-transform: uppercase; letter-spacing: 1px;
     }
     .cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
     .cal-day {
@@ -88,70 +90,68 @@
         transition: all 0.2s; font-size: 14px; font-weight: 500;
         position: relative;
     }
-    .cal-day:hover:not(.empty):not(.unavailable) { background: var(--cream); }
-    .cal-day.selected { background: var(--gold); color: #fff; }
+    .cal-day:hover:not(.empty):not(.unavailable) { background: var(--gray-50); }
+    .cal-day.selected { background: var(--cafe); color: #fff; }
     .cal-day.selected .cal-dot { background: #fff; }
-    .cal-day.available { color: var(--charcoal); }
-    .cal-day.unavailable { color: #d0d0d0; cursor: not-allowed; }
+    .cal-day.available { color: var(--gray-800); }
+    .cal-day.unavailable { color: var(--gray-300); cursor: not-allowed; }
     .cal-day.empty { cursor: default; }
-    .cal-dot {
-        width: 5px; height: 5px; border-radius: 50%;
-        margin-top: 4px;
-    }
-    .cal-day.available .cal-dot { background: var(--sage); }
-    .cal-day.unavailable .cal-dot { background: #e0e0e0; }
+    .cal-dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 4px; }
+    .cal-day.available .cal-dot { background: var(--teal); }
+    .cal-day.unavailable .cal-dot { background: var(--gray-200); }
 
     .cal-legend {
         display: flex; gap: 16px; padding: 12px 20px 16px;
-        font-size: 11px; color: #bbb;
+        font-size: 11px; color: var(--gray-400);
     }
     .cal-legend span { display: flex; align-items: center; gap: 6px; }
     .cal-legend .dot { width: 6px; height: 6px; border-radius: 50%; }
 
     .date-info-bar {
         display: flex; align-items: center; gap: 14px;
-        padding: 16px 20px; background: linear-gradient(135deg, #FFFDF9, var(--cream));
+        padding: 16px 20px;
+        background: linear-gradient(135deg, #FDF8F0, #F0E4D4);
         border-radius: var(--radius-md); margin-bottom: 24px;
-        border: 1px solid rgba(201,169,110,0.15);
+        border: 1px solid rgba(139,111,71,0.15);
     }
     .date-info-bar .icon { font-size: 24px; }
     .date-info-bar .text { font-weight: 600; font-size: 15px; }
-    .date-info-bar .sub { font-size: 12px; color: var(--charcoal-light); }
+    .date-info-bar .sub { font-size: 12px; color: var(--gray-500); }
 
     .slot-card {
-        background: #fff; border: 2px solid var(--cream-dark);
+        background: #fff; border: 2px solid var(--gray-200);
         border-radius: var(--radius-md); padding: 16px 20px;
         display: flex; justify-content: space-between; align-items: center;
         cursor: pointer; transition: all 0.3s ease;
         margin-bottom: 10px;
     }
-    .slot-card:hover { border-color: var(--gold-light); background: #FFFDF9; }
+    .slot-card:hover { border-color: var(--cafe-light); background: #FAF6F1; }
     .slot-card.selected {
-        border-color: var(--gold); background: linear-gradient(135deg, #FFFDF9, #FDF8F0);
-        box-shadow: 0 0 0 4px rgba(201,169,110,0.1);
+        border-color: var(--cafe);
+        background: linear-gradient(135deg, #FDF8F0, #F0E4D4);
+        box-shadow: 0 0 0 4px rgba(139,111,71,0.1);
     }
     .slot-card.unavailable {
-        border-color: #f0f0f0; background: #fafafa;
+        border-color: var(--gray-100); background: var(--gray-50);
         cursor: not-allowed; opacity: 0.5;
     }
     .slot-card .slot-time {
         font-family: 'Playfair Display', serif;
         font-size: 18px; font-weight: 600;
     }
-    .slot-card .slot-range { font-size: 12px; color: var(--charcoal-light); margin-top: 2px; }
+    .slot-card .slot-range { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
     .slot-card .slot-badge { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px; }
-    .slot-card .slot-badge.available { background: #E8F5E9; color: #2E7D32; }
-    .slot-card .slot-badge.booked { background: #FFEBEE; color: #C62828; }
+    .slot-card .slot-badge.available { background: #D1FAE5; color: #065F46; }
+    .slot-card .slot-badge.booked { background: #FEE2E2; color: #991B1B; }
 
     .summary-card {
         background: #fff; border-radius: var(--radius-lg);
-        border: 1px solid rgba(201,169,110,0.1);
+        border: 1px solid var(--gray-200);
         overflow: hidden; box-shadow: var(--shadow-md);
     }
     .summary-header {
         padding: 24px 28px;
-        background: linear-gradient(135deg, var(--espresso), #3a3028);
-        color: #fff;
+        background: var(--gradient-4); color: #fff;
     }
     .summary-header h3 {
         font-family: 'Playfair Display', serif;
@@ -160,37 +160,41 @@
     .summary-body { padding: 28px; }
     .summary-row {
         display: flex; justify-content: space-between; align-items: center;
-        padding: 12px 0; border-bottom: 1px solid var(--cream-dark);
+        padding: 12px 0; border-bottom: 1px solid var(--gray-100);
     }
     .summary-row:last-child { border-bottom: none; }
-    .summary-row .label { font-size: 13px; color: var(--charcoal-light); }
+    .summary-row .label { font-size: 13px; color: var(--gray-500); }
     .summary-row .value { font-weight: 600; font-size: 14px; }
     .summary-total {
         margin-top: 20px; padding: 20px 24px;
-        background: linear-gradient(135deg, #FFFDF9, var(--cream));
+        background: linear-gradient(135deg, #FDF8F0, #F0E4D4);
         border-radius: var(--radius-md); display: flex;
         justify-content: space-between; align-items: center;
-        border: 1px solid rgba(201,169,110,0.15);
+        border: 1px solid rgba(139,111,71,0.15);
     }
     .summary-total .amount {
         font-family: 'Playfair Display', serif;
-        font-size: 28px; font-weight: 700; color: var(--gold-dark);
+        font-size: 28px; font-weight: 700; color: var(--cafe-dark);
     }
 
     .back-btn {
         background: none; border: none; cursor: pointer;
-        font-size: 13px; color: var(--gold-dark); font-weight: 500;
+        font-size: 13px; color: var(--cafe); font-weight: 500;
         margin-bottom: 20px; font-family: 'DM Sans', sans-serif;
         display: flex; align-items: center; gap: 6px;
         transition: color 0.3s;
     }
-    .back-btn:hover { color: var(--gold); }
+    .back-btn:hover { color: var(--cafe-dark); }
 
     @media (max-width: 768px) {
         .booking-steps { flex-wrap: wrap; }
         .step-pill span:not(.num) { display: none; }
         .step-pill { padding: 8px 12px; }
     }
+    #time-slots::-webkit-scrollbar { width: 6px; }
+    #time-slots::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 3px; }
+    #time-slots::-webkit-scrollbar-thumb { background: var(--cafe-light); border-radius: 3px; }
+    #time-slots::-webkit-scrollbar-thumb:hover { background: var(--cafe); }
 </style>
 @endsection
 
@@ -215,7 +219,7 @@
         <div class="step" id="step-1">
             <div style="text-align:center;margin-bottom:32px;">
                 <h2 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;">Choose Your Package</h2>
-                <p style="color:var(--charcoal-light);font-size:14px;margin-top:8px;">Select the experience that suits you best</p>
+                <p style="color:var(--gray-500);font-size:14px;margin-top:8px;">Select the experience that suits you best</p>
             </div>
             <div style="display:flex;flex-direction:column;gap:12px;">
                 @foreach($services as $service)
@@ -238,7 +242,7 @@
             <button class="back-btn" onclick="goToStep(1)">← Back to packages</button>
             <div style="text-align:center;margin-bottom:32px;">
                 <h2 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;">Pick a Date & Time</h2>
-                <p id="selected-service-display" style="color:var(--charcoal-light);font-size:14px;margin-top:8px;"></p>
+                <p id="selected-service-display" style="color:var(--gray-500);font-size:14px;margin-top:8px;"></p>
             </div>
 
             <div class="cal-card">
@@ -254,9 +258,9 @@
                     <div class="cal-days" id="calendar-grid"></div>
                 </div>
                 <div class="cal-legend">
-                    <span><span class="dot" style="background:var(--sage);"></span> Available</span>
-                    <span><span class="dot" style="background:#e74c3c;"></span> Fully Booked</span>
-                    <span><span class="dot" style="background:#e0e0e0;"></span> Closed</span>
+                    <span><span class="dot" style="background:var(--teal);"></span> Available</span>
+                    <span><span class="dot" style="background:var(--red);"></span> Fully Booked</span>
+                    <span><span class="dot" style="background:var(--gray-300);"></span> Closed</span>
                 </div>
             </div>
 
@@ -272,7 +276,7 @@
 
             <div id="slots-container" style="display:none;">
                 <label style="font-size:14px;font-weight:600;margin-bottom:12px;display:block;">Available Time Slots</label>
-                <div id="time-slots"></div>
+                <div id="time-slots" style="max-height:260px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:8px;"></div>
             </div>
 
             <div style="margin-top:28px;display:flex;justify-content:flex-end;">
@@ -293,7 +297,7 @@
                 <input type="hidden" name="booking_date" id="form_booking_date">
                 <input type="hidden" name="booking_time" id="form_booking_time">
 
-                <div style="background:#fff;border-radius:var(--radius-lg);padding:32px;border:1px solid rgba(201,169,110,0.1);box-shadow:var(--shadow-sm);">
+                <div style="background:#fff;border-radius:var(--radius-lg);padding:32px;border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);">
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
                         <div class="form-group">
                             <label>Full Name *</label>
@@ -334,8 +338,8 @@
 
                     <div class="form-group">
                         <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
-                            <input type="checkbox" name="agreed_to_policy" required style="margin-top:4px;accent-color:var(--gold);">
-                            <span style="font-size:13px;color:var(--charcoal-light);">I have read and agree to 56'30 Studio's Payment and Booking Policy *</span>
+                                <input type="checkbox" name="agreed_to_policy" required style="margin-top:4px;accent-color:var(--cafe);">
+                            <span style="font-size:13px;color:var(--gray-500);">I have read and agree to 56'30 Studio's Payment and Booking Policy *</span>
                         </label>
                     </div>
                 </div>
@@ -444,15 +448,15 @@
         document.getElementById('selected-date-text').textContent = dt.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
         document.getElementById('selected-date-display').style.display = 'block';
         const slotsDiv = document.getElementById('time-slots');
-        slotsDiv.innerHTML = '<div style="padding:24px;text-align:center;color:#bbb;">Loading time slots...</div>';
+        slotsDiv.innerHTML = '<div style="padding:24px;text-align:center;color:var(--gray-400);">Loading time slots...</div>';
         document.getElementById('slots-container').style.display = 'block';
         try {
             const r = await fetch(`/booking/slots?service_id=${selectedService.id}&date=${dateStr}`);
             const data = await r.json();
-            if (data.message) { slotsDiv.innerHTML = `<div style="padding:24px;text-align:center;color:#e74c3c;">${data.message}</div>`; document.getElementById('studio-hours-text').textContent = ''; return; }
+            if (data.message) { slotsDiv.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red);">${data.message}</div>`; document.getElementById('studio-hours-text').textContent = ''; return; }
             document.getElementById('studio-hours-text').textContent = `Studio hours: ${data.studio_hours} (${data.day_label})`;
             document.getElementById('form_booking_date').value = dateStr;
-            if (!data.slots.length) { slotsDiv.innerHTML = '<div style="padding:24px;text-align:center;color:#bbb;">No available slots.</div>'; return; }
+            if (!data.slots.length) { slotsDiv.innerHTML = '<div style="padding:24px;text-align:center;color:var(--gray-400);">No available slots.</div>'; return; }
             slotsDiv.innerHTML = data.slots.map(s => `
                 <div class="slot-card ${s.available?'':'unavailable'}" ${s.available?`onclick="selectSlot('${s.time}','${s.display}')"`:''}>
                     <div>
@@ -462,7 +466,7 @@
                     <span class="slot-badge ${s.available?'available':'booked'}">${s.available?'Available':'Booked'}</span>
                 </div>
             `).join('');
-        } catch(e) { slotsDiv.innerHTML = '<div style="padding:24px;text-align:center;color:#e74c3c;">Error loading slots.</div>'; }
+        } catch(e) { slotsDiv.innerHTML = '<div style="padding:24px;text-align:center;color:var(--red);">Error loading slots.</div>'; }
     }
 
     function selectSlot(time, display) {
@@ -488,8 +492,8 @@
             <div class="summary-row"><span class="label">Pax</span><span class="value">${data.get('num_pax')}</span></div>
             <div class="summary-row"><span class="label">Payment</span><span class="value">${pm==='downpayment'?'50% Down Payment':pm.toUpperCase()}</span></div>
             <div class="summary-total">
-                <div><div style="font-size:13px;color:var(--charcoal-light);margin-bottom:4px;">Total Amount</div><div class="amount">₱${selectedService.price.toFixed(2)}</div></div>
-                <div style="text-align:right;"><div style="font-size:13px;color:var(--charcoal-light);margin-bottom:4px;">Due Now</div><div style="font-size:20px;font-weight:700;">₱${due.toFixed(2)}</div></div>
+                <div><div style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">Total Amount</div><div class="amount">₱${selectedService.price.toFixed(2)}</div></div>
+                <div style="text-align:right;"><div style="font-size:13px;color:var(--gray-500);margin-bottom:4px;">Due Now</div><div style="font-size:20px;font-weight:700;">₱${due.toFixed(2)}</div></div>
             </div>`;
         goToStep(4);
     }

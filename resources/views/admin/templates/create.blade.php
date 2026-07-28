@@ -20,7 +20,7 @@
             </div>
             <div class="form-group">
                 <label>Subject</label>
-                <input type="text" name="subject" class="form-control" value="{{ old('subject') }}" placeholder="Use {{booking_ref}}, {{customer_name}}, {{booking_date}}, {{booking_time}}, {{package_name}}, {{total_amount}} as placeholders">
+                <input type="text" name="subject" class="form-control" value="{{ old('subject') }}" placeholder="Use @{{booking_ref}}, @{{customer_name}}, @{{booking_date}}, @{{booking_time}}, @{{package_name}}, @{{total_amount}} as placeholders">
             </div>
             <div class="form-group">
                 <label>Body Content</label>

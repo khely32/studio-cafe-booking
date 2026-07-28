@@ -4,15 +4,39 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Page;
+use App\Models\Folder;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class PageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pages = Page::orderBy('sort_order')->orderBy('created_at', 'desc')->paginate(20);
-        return view('admin.pages.index', compact('pages'));
+        $query = Page::query();
+
+        $sort = $request->get('sort', 'title');
+        $folderFilter = $request->get('folder');
+
+        if ($folderFilter) {
+            $query->where('folder_id', $folderFilter);
+        }
+
+        if ($sort === 'title') {
+            $query->orderBy('title');
+        } elseif ($sort === 'newest') {
+            $query->orderBy('created_at', 'desc');
+        } elseif ($sort === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } else {
+            $query->orderBy('sort_order')->orderBy('title');
+        }
+
+        $pages = $query->paginate(10)->withQueryString();
+        $folders = Folder::withCount('pages')->get();
+        $slackUrl = Setting::get('slack_webhook_url');
+
+        return view('admin.pages.index', compact('pages', 'folders', 'slackUrl'));
     }
 
     public function create()
@@ -65,5 +89,29 @@ class PageController extends Controller
     {
         $page->delete();
         return redirect()->route('admin.pages.index')->with('success', 'Page deleted.');
+    }
+
+    public function duplicate(Page $page)
+    {
+        $newPage = $page->replicate();
+        $newPage->title = $page->title . ' (Copy)';
+        $newPage->slug = Str::slug($newPage->title);
+        $newPage->is_published = false;
+        $newPage->save();
+
+        return redirect()->route('admin.pages.edit', $newPage)->with('success', 'Page duplicated. Edit the new copy.');
+    }
+
+    public function togglePublish(Page $page)
+    {
+        $page->update(['is_published' => !$page->is_published]);
+        $status = $page->is_published ? 'published' : 'taken offline';
+        return redirect()->back()->with('success', "Page {$status}.");
+    }
+
+    public function showBySlug($slug)
+    {
+        $page = Page::where('slug', $slug)->where('is_published', 1)->firstOrFail();
+        return view('pages.show', compact('page'));
     }
 }

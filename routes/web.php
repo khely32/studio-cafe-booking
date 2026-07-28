@@ -9,15 +9,28 @@ use App\Http\Controllers\Admin\TeamController;
 use App\Http\Controllers\Admin\TemplateController;
 use App\Http\Controllers\Admin\PollController;
 use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\ClientDashboardController;
 
 Route::get('/', function () {
     $services = \App\Models\Service::active()->get();
     return view('home', compact('services'));
 })->name('home');
 
+Route::get('/studio', function () {
+    return response()->file(public_path('landing/index.html'));
+})->name('studio.landing');
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.send');
+Route::get('/reset-password', [AuthController::class, 'showResetPassword'])->name('password.reset.form');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
 
 Route::prefix('booking')->name('booking.')->group(function () {
     Route::get('/', [BookingController::class, 'index'])->name('index');
@@ -28,6 +41,8 @@ Route::prefix('booking')->name('booking.')->group(function () {
     Route::get('/confirmation/{bookingRef}', [BookingController::class, 'confirmation'])->name('confirmation');
 });
 
+Route::get('/page/{slug}', [\App\Http\Controllers\Admin\PageController::class, 'showBySlug'])->name('pages.public');
+
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/bookings', [AdminController::class, 'bookings'])->name('bookings');
@@ -35,11 +50,22 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::patch('/bookings/{booking}/status', [AdminController::class, 'updateStatus'])->name('booking.update');
 
     Route::resource('pages', PageController::class);
+    Route::post('/pages/{page}/duplicate', [PageController::class, 'duplicate'])->name('pages.duplicate');
+    Route::patch('/pages/{page}/toggle-publish', [PageController::class, 'togglePublish'])->name('pages.toggle-publish');
+    Route::post('/folders', [\App\Http\Controllers\Admin\FolderController::class, 'store'])->name('folders.store');
+    Route::delete('/folders/{folder}', [\App\Http\Controllers\Admin\FolderController::class, 'destroy'])->name('folders.destroy');
+    Route::post('/settings/slack', [AdminController::class, 'saveSlack'])->name('settings.slack');
+    Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class);
     Route::resource('team', TeamController::class);
     Route::resource('templates', TemplateController::class);
     Route::resource('polls', PollController::class)->except(['show']);
     Route::post('/polls/{poll}/toggle-close', [PollController::class, 'toggleClose'])->name('polls.toggle-close');
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+});
+
+Route::prefix('dashboard')->name('client.')->middleware('client')->group(function () {
+    Route::get('/', [ClientDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/booking/{booking}', [ClientDashboardController::class, 'bookingDetail'])->name('booking.detail');
 });
 
 Route::get('/poll/{poll}', [\App\Http\Controllers\PollController::class, 'show'])->name('polls.show');

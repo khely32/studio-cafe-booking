@@ -69,8 +69,8 @@ class AnalyticsController extends Controller
                 'count' => $row->count,
             ]);
 
-        // Bookings by day of week (SQLite compatible)
-        $dayOfWeek = Booking::selectRaw("CAST(strftime('%w', booking_date) AS INTEGER) as day, count(*) as count")
+        // Bookings by day of week (MySQL compatible)
+        $dayOfWeek = Booking::selectRaw("DAYOFWEEK(booking_date) as day, count(*) as count")
             ->groupBy('day')
             ->orderBy('day')
             ->pluck('count', 'day')
@@ -78,7 +78,8 @@ class AnalyticsController extends Controller
 
         $dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         $bookingsByDay = collect($dayLabels)->map(function ($label, $index) use ($dayOfWeek) {
-            return ['day' => $label, 'count' => $dayOfWeek[$index] ?? 0];
+            $mysqlDay = $index + 1; // MySQL DAYOFWEEK: 1=Sun, 2=Mon, ...
+            return ['day' => $label, 'count' => $dayOfWeek[$mysqlDay] ?? 0];
         })->toArray();
 
         return view('admin.analytics.index', compact(

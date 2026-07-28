@@ -10,7 +10,7 @@ class Page extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'slug', 'content', 'meta_title', 'meta_description', 'is_published', 'sort_order'];
+    protected $fillable = ['title', 'slug', 'content', 'meta_title', 'meta_description', 'is_published', 'sort_order', 'folder_id'];
 
     protected $casts = [
         'is_published' => 'boolean',
@@ -23,5 +23,10 @@ class Page extends Model
                 $page->slug = Str::slug($page->title);
             }
         });
+    }
+
+    public function folder()
+    {
+        return $this->belongsTo(Folder::class);
     }
 }

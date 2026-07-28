@@ -7,7 +7,7 @@
         <div class="page-title">Booking Details</div>
         <div class="page-subtitle" style="font-family:monospace;">{{ $booking->booking_ref }}</div>
     </div>
-    <a href="{{ route('admin.bookings') }}" class="btn btn-secondary">← Back to Bookings</a>
+    <a href="{{ route('admin.bookings') }}" class="btn btn-secondary">← Back to My Bookings</a>
 </div>
 
 <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">

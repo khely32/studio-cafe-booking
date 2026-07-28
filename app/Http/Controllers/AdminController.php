@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -15,39 +16,49 @@ class AdminController extends Controller
         $startOfWeek = Carbon::now()->startOfWeek();
         $startOfMonth = Carbon::now()->startOfMonth();
 
-        $stats = [
-            'today_bookings' => Booking::where('booking_date', $today)->count(),
-            'week_bookings' => Booking::whereBetween('booking_date', [$startOfWeek, Carbon::now()->endOfWeek()])->count(),
-            'month_bookings' => Booking::where('booking_date', '>=', $startOfMonth)->count(),
-            'month_revenue' => Booking::where('booking_date', '>=', $startOfMonth)
-                ->whereIn('status', ['confirmed', 'completed'])
-                ->sum('amount_paid'),
-            'pending_count' => Booking::where('status', 'pending')->count(),
-            'confirmed_count' => Booking::where('status', 'confirmed')->count(),
-            'cancelled_count' => Booking::where('status', 'cancelled')->count(),
-        ];
+        $user = Auth::user();
+        $hour = Carbon::now()->hour;
+        if ($hour < 12) $greeting = 'Good morning';
+        elseif ($hour < 17) $greeting = 'Good afternoon';
+        else $greeting = 'Good evening';
 
         $upcomingBookings = Booking::with('service')
             ->where('booking_date', '>=', $today)
             ->whereIn('status', ['pending', 'confirmed'])
             ->orderBy('booking_date')
             ->orderBy('booking_time')
-            ->limit(20)
+            ->limit(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'upcomingBookings'));
+        $pages = \App\Models\Page::where('is_published', true)->get();
+
+        return view('admin.dashboard', compact('user', 'greeting', 'upcomingBookings', 'pages'));
     }
 
     public function bookings(Request $request)
     {
         $query = Booking::with('service');
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        $filter = $request->get('filter', 'upcoming');
+        $hasDateRange = $request->filled('date_from') || $request->filled('date_to');
+
+        if ($hasDateRange) {
+            if ($request->filled('date_from')) {
+                $query->where('booking_date', '>=', $request->date_from);
+            }
+            if ($request->filled('date_to')) {
+                $query->where('booking_date', '<=', $request->date_to);
+            }
+        } else {
+            if ($filter === 'upcoming') {
+                $query->where('booking_date', '>=', Carbon::today());
+            } elseif ($filter === 'past') {
+                $query->where('booking_date', '<', Carbon::today());
+            }
         }
 
-        if ($request->filled('date')) {
-            $query->where('booking_date', $request->date);
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         if ($request->filled('search')) {
@@ -59,11 +70,15 @@ class AdminController extends Controller
             });
         }
 
-        $bookings = $query->orderBy('booking_date', 'desc')
-            ->orderBy('booking_time', 'desc')
-            ->paginate(20);
+        $bookings = $query->orderBy('booking_date', 'asc')
+            ->orderBy('booking_time', 'asc')
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('admin.bookings', compact('bookings'));
+        $totalUpcoming = Booking::where('booking_date', '>=', Carbon::today())->count();
+        $totalPast = Booking::where('booking_date', '<', Carbon::today())->count();
+
+        return view('admin.bookings', compact('bookings', 'filter', 'totalUpcoming', 'totalPast'));
     }
 
     public function updateStatus(Booking $booking, Request $request)
@@ -81,5 +96,12 @@ class AdminController extends Controller
     {
         $booking->load('service', 'addons');
         return view('admin.detail', compact('booking'));
+    }
+
+    public function saveSlack(Request $request)
+    {
+        $request->validate(['slack_webhook_url' => 'nullable|url']);
+        \App\Models\Setting::set('slack_webhook_url', $request->slack_webhook_url);
+        return redirect()->route('admin.pages.index')->with('success', 'Slack webhook saved.');
     }
 }

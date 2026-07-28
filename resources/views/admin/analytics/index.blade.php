@@ -71,7 +71,7 @@
 @parent
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const primary = '#4F46E5', primaryLight = '#818CF8', green = '#10B981', greenLight = '#34D399';
+    const primary = '#8B6F47', primaryLight = '#C9A96E', green = '#10B981', greenLight = '#34D399';
 
     const monthlyData = @json($monthlyBookings);
     const months = monthlyData.map(m => m.month);
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     @if($packageBreakdown->isNotEmpty())
     new Chart(document.getElementById('packagesChart'), {
         type: 'doughnut',
-        data: { labels: @json($packageBreakdown->pluck('name')), datasets: [{ data: @json($packageBreakdown->pluck('count')), backgroundColor: [primary, primaryLight, green, greenLight, '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'] }] },
+        data: { labels: @json($packageBreakdown->pluck('name')), datasets: [{ data: @json($packageBreakdown->pluck('count')), backgroundColor: [primary, primaryLight, green, greenLight, '#D4A574', '#EF4444', '#6B4F35', '#E8C9A0', '#5C4A3A', '#F0E4D4'] }] },
         options: { responsive: true, plugins: { legend: { position: 'right', labels: { boxWidth: 12 } } } }
     });
     @endif
