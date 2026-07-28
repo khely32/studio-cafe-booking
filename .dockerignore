@@ -1,0 +1,11 @@
+/vendor/
+node_modules/
+.env
+.env.backup
+storage/*.key
+/public/hot
+/public/storage
+*.log
+.DS_Store
+Thumbs.db
+.git
