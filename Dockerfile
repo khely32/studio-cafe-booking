@@ -28,7 +28,7 @@ COPY . .
 
 RUN mkdir -p database && touch database/database.sqlite
 
-RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
+RUN php artisan key:generate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 EXPOSE 8000
 
