@@ -24,6 +24,14 @@
                 <textarea name="description" class="form-control" rows="8" placeholder="Enter package details, one per line...">{{ old('description', $service->description ?? '') }}</textarea>
             </div>
 
+            <div class="form-group">
+                <label>Image URL (optional)</label>
+                <input type="url" name="image" value="{{ old('image', $service->image ?? '') }}" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+                @if(isset($service) && $service->image)
+                <div style="margin-top:8px;"><img src="{{ $service->image }}" alt="" style="width:120px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--gray-200);"></div>
+                @endif
+            </div>
+
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
                 <div class="form-group">
                     <label>Price (₱) *</label>

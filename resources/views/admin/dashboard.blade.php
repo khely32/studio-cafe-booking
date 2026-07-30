@@ -96,4 +96,19 @@
     </div>
 
 </div>
+
+<div class="chuquel-badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--cafe)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;margin:0 auto 8px;display:block;">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+        <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+    </svg>
+    <div class="name">chuquel</div>
+    <div class="tag">studio brand</div>
+</div>
+
+<style>
+.chuquel-badge { display: block; }
+</style>
 @endsection

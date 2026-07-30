@@ -54,11 +54,23 @@
             display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 11px;
         }
+        .topbar-brand .logo svg { width: 18px; height: 18px; }
         .topbar-brand .text { font-weight: 700; font-size: 14px; color: var(--gray-900); }
         .topbar-brand .text span {
             background: var(--gradient-1); -webkit-background-clip: text;
             -webkit-text-fill-color: transparent; background-clip: text;
         }
+        .chuquel-badge {
+            display: none; position: fixed; bottom: 24px; right: 24px; z-index: 999;
+            background: #fff; border: 1px solid var(--gray-200);
+            border-radius: 16px; padding: 16px 20px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            text-align: center; min-width: 160px;
+            animation: fadeIn 0.5s ease;
+        }
+        .chuquel-badge img, .chuquel-badge svg { width: 48px; height: 48px; margin-bottom: 8px; }
+        .chuquel-badge .name { font-weight: 700; font-size: 16px; color: var(--cafe); font-family: 'Georgia', serif; letter-spacing: 1px; }
+        .chuquel-badge .tag { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
         .topbar-right { display: flex; align-items: center; gap: 16px; }
         .topbar-right a { font-size: 13px; color: var(--gray-500); text-decoration: none; }
         .topbar-right a:hover { color: var(--cafe); }
@@ -208,8 +220,15 @@
 <body>
     <nav class="topbar">
         <div class="topbar-brand">
-            <div class="logo">56</div>
-            <div class="text">56'30 <span>Studio</span></div>
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+                    <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+            </div>
+            <div class="text">chuquel</div>
         </div>
         <div class="topbar-right">
             <a href="{{ route('home') }}">View Site</a>

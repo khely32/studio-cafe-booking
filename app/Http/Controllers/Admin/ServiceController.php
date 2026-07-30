@@ -28,6 +28,7 @@ class ServiceController extends Controller
             'price' => 'required|numeric|min:0',
             'duration_minutes' => 'required|integer|min:1',
             'max_pax' => 'required|integer|min:1',
+            'image' => 'nullable|string|max:500',
             'is_active' => 'boolean',
             'sort_order' => 'integer|min:0',
         ]);
@@ -52,6 +53,7 @@ class ServiceController extends Controller
             'price' => 'required|numeric|min:0',
             'duration_minutes' => 'required|integer|min:1',
             'max_pax' => 'required|integer|min:1',
+            'image' => 'nullable|string|max:500',
             'is_active' => 'boolean',
             'sort_order' => 'integer|min:0',
         ]);

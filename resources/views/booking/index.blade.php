@@ -224,9 +224,16 @@
             <div style="display:flex;flex-direction:column;gap:12px;">
                 @foreach($services as $service)
                 <div class="pkg-card" data-service-id="{{ $service->id }}" onclick="selectService({{ $service->id }}, '{{ addslashes($service->name) }}', {{ $service->price }}, {{ $service->duration_minutes }}, {{ $service->max_pax }})">
-                    <div>
-                        <div class="pkg-name">{{ $service->name }}</div>
-                        <div class="pkg-meta">🕐 {{ $service->duration_label }} · 👥 Up to {{ $service->max_pax }} pax</div>
+                    <div style="display:flex;align-items:center;gap:16px;">
+                        @if($service->image)
+                        <div style="width:60px;height:60px;border-radius:10px;overflow:hidden;flex-shrink:0;">
+                            <img src="{{ $service->image }}" alt="{{ $service->name }}" style="width:100%;height:100%;object-fit:cover;">
+                        </div>
+                        @endif
+                        <div>
+                            <div class="pkg-name">{{ $service->name }}</div>
+                            <div class="pkg-meta">🕐 {{ $service->duration_label }} · 👥 Up to {{ $service->max_pax }} pax</div>
+                        </div>
                     </div>
                     <div style="text-align:right;">
                         <div class="pkg-price">₱{{ number_format($service->price, 2) }}</div>

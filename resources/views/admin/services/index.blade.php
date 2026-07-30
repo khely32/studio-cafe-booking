@@ -14,12 +14,12 @@
     .svc-item:last-child { border-bottom: none; }
     .svc-item:hover { background: var(--gray-50); }
     .svc-item-left { display: flex; align-items: center; gap: 14px; flex: 1; }
-    .svc-item-icon {
-        width: 42px; height: 42px; border-radius: 12px;
-        background: var(--gradient-1); color: #fff;
-        display: flex; align-items: center; justify-content: center;
-        font-weight: 700; font-size: 14px; flex-shrink: 0;
+    .svc-item-thumb {
+        width: 42px; height: 42px; border-radius: 10px; overflow: hidden; flex-shrink: 0;
+        background: var(--gradient-1); display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 14px; color: #fff;
     }
+    .svc-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .svc-item-info { flex: 1; }
     .svc-item-title { font-weight: 600; font-size: 15px; color: var(--gray-900); }
     .svc-item-desc { font-size: 12px; color: var(--gray-500); margin-top: 2px; max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -55,7 +55,13 @@
     @foreach($services as $service)
     <div class="svc-item">
         <div class="svc-item-left">
-            <div class="svc-item-icon">{{ strtoupper(substr($service->name, 0, 2)) }}</div>
+            <div class="svc-item-thumb">
+                @if($service->image)
+                <img src="{{ $service->image }}" alt="{{ $service->name }}">
+                @else
+                {{ strtoupper(substr($service->name, 0, 2)) }}
+                @endif
+            </div>
             <div class="svc-item-info">
                 <div class="svc-item-title">{{ $service->name }}</div>
                 <div class="svc-item-desc">{{ $service->description }}</div>

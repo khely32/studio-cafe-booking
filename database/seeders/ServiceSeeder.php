@@ -18,6 +18,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 10,
                 'max_pax' => 1,
                 'sort_order' => 1,
+                'image' => 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=300&fit=crop',
             ],
             [
                 'name' => 'DUO',
@@ -26,6 +27,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 20,
                 'max_pax' => 2,
                 'sort_order' => 2,
+                'image' => 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400&h=300&fit=crop',
             ],
             [
                 'name' => 'BONDING',
@@ -34,6 +36,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 30,
                 'max_pax' => 4,
                 'sort_order' => 3,
+                'image' => 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=300&fit=crop',
             ],
             [
                 'name' => 'PARTY',
@@ -42,6 +45,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 60,
                 'max_pax' => 7,
                 'sort_order' => 4,
+                'image' => 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop',
             ],
             [
                 'name' => 'Maternity Photoshoot Package',
@@ -50,6 +54,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 60,
                 'max_pax' => 2,
                 'sort_order' => 5,
+                'image' => 'https://picsum.photos/seed/maternity/400/300',
             ],
             [
                 'name' => 'Boho Beige Themed Pre-Birthday Shoot',
@@ -58,6 +63,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 45,
                 'max_pax' => 4,
                 'sort_order' => 6,
+                'image' => 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=300&fit=crop',
             ],
             [
                 'name' => 'Sunset Garden Themed Pre-Birthday Shoot',
@@ -66,6 +72,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 45,
                 'max_pax' => 4,
                 'sort_order' => 7,
+                'image' => 'https://picsum.photos/seed/sunset-garden/400/300',
             ],
             [
                 'name' => 'FEELS LIKE HOME Self Shoot',
@@ -74,6 +81,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 35,
                 'max_pax' => 4,
                 'sort_order' => 8,
+                'image' => 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop',
             ],
             [
                 'name' => 'FEELS LIKE HOME Session with Photographer',
@@ -82,6 +90,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 35,
                 'max_pax' => 4,
                 'sort_order' => 9,
+                'image' => 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400&h=300&fit=crop',
             ],
             [
                 'name' => 'Safari Themed Pre-Birthday Photoshoot',
@@ -90,6 +99,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 60,
                 'max_pax' => 4,
                 'sort_order' => 10,
+                'image' => 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=300&fit=crop',
             ],
             [
                 'name' => 'Graduation Photoshoot Package',
@@ -98,6 +108,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 20,
                 'max_pax' => 5,
                 'sort_order' => 11,
+                'image' => 'https://picsum.photos/seed/graduation/400/300',
             ],
             [
                 'name' => 'Birthday Glow-Up Session',
@@ -106,6 +117,7 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 30,
                 'max_pax' => 1,
                 'sort_order' => 12,
+                'image' => 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400&h=300&fit=crop',
             ],
             [
                 'name' => 'Studio Rent',
@@ -114,11 +126,12 @@ class ServiceSeeder extends Seeder
                 'duration_minutes' => 60,
                 'max_pax' => 7,
                 'sort_order' => 13,
+                'image' => 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&h=300&fit=crop',
             ],
         ];
 
         foreach ($services as $service) {
-            Service::create($service);
+            Service::updateOrCreate(['name' => $service['name']], $service);
         }
 
         $addons = [

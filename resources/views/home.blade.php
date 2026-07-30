@@ -136,6 +136,13 @@
         display: flex; align-items: center; justify-content: center;
         font-size: 48px;
     }
+    .package-card-image img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+    .package-card:hover .package-card-image img {
+        transform: scale(1.08);
+    }
     .package-card-image .price-tag {
         position: absolute; bottom: 16px; right: 16px;
         padding: 8px 18px; border-radius: 100px;
@@ -331,7 +338,11 @@ Hair &amp; Make up Artist — ₱1,800
         @foreach($services as $index => $service)
         <div class="package-card" onclick="window.location='{{ route('booking.index') }}?service={{ $service->id }}'" style="animation: fadeInUp 0.6s ease {{ $index * 0.08 }}s both;">
             <div class="package-card-image" style="background:{{ $gradients[$index % 6]['bg'] }};">
+                @if($service->image)
+                <img src="{{ $service->image }}" alt="{{ $service->name }}" loading="lazy">
+                @else
                 <div class="img-placeholder">{{ $gradients[$index % 6]['icon'] }}</div>
+                @endif
                 <div class="price-tag">₱{{ number_format($service->price, 2) }}</div>
             </div>
             <div class="package-card-body">
