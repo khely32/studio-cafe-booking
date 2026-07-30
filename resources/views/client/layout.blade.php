@@ -49,8 +49,8 @@
             width: 32px; height: 32px; border-radius: 10px;
             background: var(--gradient-1); color: #fff;
             display: flex; align-items: center; justify-content: center;
-            font-family: 'Playfair Display', serif; font-weight: 700; font-size: 12px;
         }
+        .topbar-brand .logo svg { width: 18px; height: 18px; }
         .topbar-brand .text {
             font-family: 'Playfair Display', serif; font-weight: 700;
             font-size: 15px; color: var(--gray-900);
@@ -165,8 +165,15 @@
 <body>
     <nav class="topbar">
         <div class="topbar-brand">
-            <div class="logo">56</div>
-            <div class="text">56'30 <span>Studio</span></div>
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+                    <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+            </div>
+            <div class="text">chuquel</div>
         </div>
         <div class="topbar-right">
             <span class="user-name">{{ Auth::user()->name }}</span>
@@ -191,5 +198,33 @@
         @endif
         @yield('content')
     </div>
+
+    <div class="chuquel-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--cafe)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+            <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        <div class="name">chuquel</div>
+        <div class="tag">studio brand</div>
+    </div>
+
+    <style>
+    .chuquel-badge {
+        position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+        background: #fff; border: 1px solid var(--gray-200);
+        border-radius: 16px; padding: 14px 18px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+        text-align: center; min-width: 140px;
+        animation: fadeIn 0.5s ease;
+    }
+    .chuquel-badge svg { width: 40px; height: 40px; margin: 0 auto 6px; display: block; }
+    .chuquel-badge .name { font-weight: 700; font-size: 15px; color: var(--cafe); font-family: 'Georgia', serif; letter-spacing: 1px; }
+    .chuquel-badge .tag { font-size: 9px; color: var(--gray-400); margin-top: 1px; text-transform: uppercase; letter-spacing: 1px; }
+    @media (max-width: 768px) {
+        .chuquel-badge { display: none; }
+    }
+    </style>
 </body>
 </html>

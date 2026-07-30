@@ -61,16 +61,16 @@
             -webkit-text-fill-color: transparent; background-clip: text;
         }
         .chuquel-badge {
-            display: none; position: fixed; bottom: 24px; right: 24px; z-index: 999;
+            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
             background: #fff; border: 1px solid var(--gray-200);
-            border-radius: 16px; padding: 16px 20px;
+            border-radius: 16px; padding: 14px 18px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-            text-align: center; min-width: 160px;
+            text-align: center; min-width: 140px;
             animation: fadeIn 0.5s ease;
         }
-        .chuquel-badge img, .chuquel-badge svg { width: 48px; height: 48px; margin-bottom: 8px; }
-        .chuquel-badge .name { font-weight: 700; font-size: 16px; color: var(--cafe); font-family: 'Georgia', serif; letter-spacing: 1px; }
-        .chuquel-badge .tag { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+        .chuquel-badge svg { width: 40px; height: 40px; margin: 0 auto 6px; display: block; }
+        .chuquel-badge .name { font-weight: 700; font-size: 15px; color: var(--cafe); font-family: 'Georgia', serif; letter-spacing: 1px; }
+        .chuquel-badge .tag { font-size: 9px; color: var(--gray-400); margin-top: 1px; text-transform: uppercase; letter-spacing: 1px; }
         .topbar-right { display: flex; align-items: center; gap: 16px; }
         .topbar-right a { font-size: 13px; color: var(--gray-500); text-decoration: none; }
         .topbar-right a:hover { color: var(--cafe); }
@@ -274,5 +274,18 @@
         .pagination li.active span { background: var(--cafe); color: #fff; border-color: var(--cafe); }
         .pagination li.disabled span { color: var(--gray-300); cursor: not-allowed; }
     </style>
+
+    <div class="chuquel-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--cafe)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+            <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        <div class="name">chuquel</div>
+        <div class="tag">studio brand</div>
+    </div>
+
+    @yield('scripts')
 </body>
 </html>

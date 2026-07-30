@@ -92,16 +92,17 @@
             box-shadow: 0 0 20px rgba(139,111,71,0.5), 0 0 40px rgba(201,169,110,0.25);
             animation: neonPulse 2s ease-in-out infinite;
         }
-        @keyframes neonPulse {
-            0%,100% { box-shadow: 0 0 20px rgba(139,111,71,0.5), 0 0 40px rgba(201,169,110,0.25); }
-            50% { box-shadow: 0 0 30px rgba(139,111,71,0.7), 0 0 60px rgba(201,169,110,0.35), 0 0 80px rgba(139,111,71,0.15); }
-        }
+        .navbar-brand-col { display: flex; flex-direction: column; }
         .navbar-text {
             font-family: 'Playfair Display', serif;
             font-size: 26px; font-weight: 700; color: var(--espresso);
-            letter-spacing: -0.3px;
+            letter-spacing: -0.3px; line-height: 1;
         }
         .navbar-text span { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .navbar-sub {
+            font-size: 11px; font-weight: 600; color: var(--gray-400);
+            letter-spacing: 2px; text-transform: uppercase; margin-top: 2px;
+        }
         .navbar-links { display: flex; gap: 8px; align-items: center; }
         .navbar-links a {
             font-size: 14px; font-weight: 600; color: var(--cafe);
@@ -329,8 +330,18 @@
     <nav class="navbar" id="navbar">
         <div class="navbar-inner">
             <a href="{{ route('home') }}" class="navbar-brand">
-                <div class="navbar-logo">56</div>
-                <div class="navbar-text">56'30 <span>Studio</span></div>
+                <div class="navbar-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px;">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+                        <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                    </svg>
+                </div>
+                <div class="navbar-brand-col">
+                    <div class="navbar-text">56'30 <span>Studio</span></div>
+                    <div class="navbar-sub">by chuquel</div>
+                </div>
             </a>
             <div class="navbar-links">
                 <a href="{{ route('home') }}">Home</a>
@@ -356,7 +367,37 @@
         <div class="footer-divider"></div>
         <p>GCash / PayMaya: Ma. Jaliha Unlayao &middot; 09533651548</p>
         <p style="margin-top:8px;font-size:12px;opacity:0.5;">&copy; {{ date('Y') }} 56'30 Studio Cafe. All rights reserved.</p>
+        <p style="margin-top:4px;font-size:11px;opacity:0.35;letter-spacing:1px;">by chuquel</p>
     </footer>
+
+    <div class="chuquel-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--cafe)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+            <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        <div class="chuquel-name">chuquel</div>
+        <div class="chuquel-tag">studio brand</div>
+    </div>
+
+    <style>
+    .chuquel-badge {
+        position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+        background: #fff; border: 1px solid var(--gray-200);
+        border-radius: 16px; padding: 14px 18px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+        text-align: center; min-width: 140px;
+        animation: fadeIn 0.5s ease;
+    }
+    .chuquel-badge svg { width: 40px; height: 40px; margin: 0 auto 6px; display: block; }
+    .chuquel-name { font-weight: 700; font-size: 15px; color: var(--cafe); font-family: 'Georgia', serif; letter-spacing: 1px; }
+    .chuquel-tag { font-size: 9px; color: var(--gray-400); margin-top: 1px; text-transform: uppercase; letter-spacing: 1px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 768px) {
+        .chuquel-badge { display: none; }
+    }
+    </style>
 
     <script>
         window.addEventListener('scroll', () => {
