@@ -28,13 +28,18 @@ Route::get('/diag', function () {
     $out['env_PGUSER'] = getenv('PGUSER') ?: 'NOT SET';
     $out['env_DATABASE_URL'] = getenv('DATABASE_URL') ? 'SET' : 'NOT SET';
     $out['env_DB_CONNECTION'] = getenv('DB_CONNECTION') ?: 'NOT SET';
+    $out['env_PGOPTIONS'] = getenv('PGOPTIONS') ?: 'NOT SET';
     try {
         $pdo = \Illuminate\Support\Facades\DB::connection()->getPdo();
         $out['pdo'] = 'CONNECTED';
     } catch (\Throwable $e) {
         $out['pdo_error'] = get_class($e).': '.$e->getMessage();
     }
-    $out['migrations_table'] = \Illuminate\Support\Facades\Schema::hasTable('migrations');
+    try {
+        $out['migrations_table'] = \Illuminate\Support\Facades\Schema::hasTable('migrations');
+    } catch (\Throwable $e) {
+        $out['migrations_error'] = get_class($e).': '.$e->getMessage();
+    }
     return response()->json($out);
 });
 
