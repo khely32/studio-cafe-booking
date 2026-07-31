@@ -14,7 +14,9 @@ use App\Http\Controllers\ClientDashboardController;
 Route::get('/', function () {
     $services = \App\Models\Service::active()->get();
     $addons = \App\Models\Addon::active()->orderBy('sort_order')->get();
-    return view('home', compact('services', 'addons'));
+    $policyContent = \App\Models\Setting::get('home_policy', '');
+    $guidesContent = \App\Models\Setting::get('home_guides', '');
+    return view('home', compact('services', 'addons', 'policyContent', 'guidesContent'));
 })->name('home');
 
 Route::get('/studio', function () {
@@ -58,6 +60,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::post('/settings/slack', [AdminController::class, 'saveSlack'])->name('settings.slack');
     Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class);
     Route::resource('addons', \App\Http\Controllers\Admin\AddonController::class);
+    Route::get('/settings/homepage', [\App\Http\Controllers\Admin\SettingsController::class, 'homepage'])->name('settings.homepage');
+    Route::post('/settings/homepage', [\App\Http\Controllers\Admin\SettingsController::class, 'updateHomepage'])->name('settings.homepage.update');
     Route::resource('team', TeamController::class);
     Route::resource('templates', TemplateController::class);
     Route::resource('polls', PollController::class)->except(['show']);

@@ -597,6 +597,7 @@
                     ['route' => 'admin.templates.index', 'label' => 'Templates', 'data-page' => 'Templates'],
                     ['route' => 'admin.analytics', 'label' => 'Analytics', 'data-page' => 'Analytics'],
                     ['route' => 'admin.polls.index', 'label' => 'Polls', 'data-page' => 'Polls'],
+                    ['route' => 'admin.settings.homepage', 'label' => 'Settings', 'data-page' => 'Settings'],
                 ];
             @endphp
             @foreach($navLinks as $link)
