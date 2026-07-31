@@ -135,28 +135,30 @@ class ServiceSeeder extends Seeder
         }
 
         $addons = [
-            ['name' => 'Extra Person (Adult 7y/o+)', 'description' => 'Additional adult participant', 'price' => 249],
-            ['name' => 'Extra Person (Kids 6y/o below)', 'description' => 'Additional child participant', 'price' => 199],
-            ['name' => 'Extra Pet', 'description' => 'Additional pet (1st pet is free)', 'price' => 199],
-            ['name' => 'Extended Time (10 min)', 'description' => 'Additional 10 minutes', 'price' => 249],
-            ['name' => 'Additional Backdrop', 'description' => 'Extra backdrop color change', 'price' => 199],
-            ['name' => 'Printed Copy 4R', 'description' => '4R photo print', 'price' => 80],
-            ['name' => 'Printed Copy 5R', 'description' => '5R photo print', 'price' => 110],
-            ['name' => 'Photo Card (2 pcs)', 'description' => 'Photo card prints', 'price' => 100],
-            ['name' => 'Photo Strip (2 pcs)', 'description' => 'Photo strip prints', 'price' => 100],
-            ['name' => 'Printed Copy A4', 'description' => 'A4 photo print', 'price' => 150],
-            ['name' => 'A4 with Frame', 'description' => 'A4 photo with frame (black, wood, or white)', 'price' => 380],
-            ['name' => 'Number Balloon', 'description' => '2ft cream caramel colored balloon', 'price' => 50],
-            ['name' => 'Fake Cake', 'description' => 'Decorative fake cake prop', 'price' => 60],
-            ['name' => 'Photographer (10 min)', 'description' => 'Professional photographer for 10 minutes', 'price' => 500],
-            ['name' => 'Photographer (20 min)', 'description' => 'Professional photographer for 20 minutes', 'price' => 700],
-            ['name' => 'Photographer (30 min)', 'description' => 'Professional photographer for 30 minutes', 'price' => 900],
-            ['name' => 'Photographer (1 hour)', 'description' => 'Professional photographer for 1 hour', 'price' => 1250],
-            ['name' => 'Hair & Makeup Artist', 'description' => 'Professional HMU service', 'price' => 1800],
+            ['name' => 'Adult (7 y/o up)', 'description' => null, 'price' => 249, 'category' => 'Extra person', 'sort_order' => 1],
+            ['name' => 'Kids (6 y/o below)', 'description' => null, 'price' => 199, 'category' => 'Extra person', 'sort_order' => 2],
+            ['name' => 'Infant (5 months and below)', 'description' => null, 'price' => 0, 'category' => 'Extra person', 'sort_order' => 3],
+            ['name' => '1 Pet', 'description' => null, 'price' => 0, 'category' => 'Pets', 'sort_order' => 4],
+            ['name' => 'Extra pet', 'description' => null, 'price' => 199, 'category' => 'Pets', 'sort_order' => 5],
+            ['name' => '10 minutes', 'description' => null, 'price' => 249, 'category' => 'Extend time', 'sort_order' => 6],
+            ['name' => 'Additional Backdrop', 'description' => 'Beige, tropical green, Chocolate brown, black and White', 'price' => 199, 'category' => null, 'sort_order' => 7],
+            ['name' => '4R', 'description' => null, 'price' => 80, 'category' => 'Printed copy', 'sort_order' => 8],
+            ['name' => '5R', 'description' => null, 'price' => 110, 'category' => 'Printed copy', 'sort_order' => 9],
+            ['name' => 'Photo card 2 pcs', 'description' => null, 'price' => 100, 'category' => 'Printed copy', 'sort_order' => 10],
+            ['name' => 'Photo strip 2 pcs', 'description' => null, 'price' => 100, 'category' => 'Printed copy', 'sort_order' => 11],
+            ['name' => 'A4', 'description' => null, 'price' => 150, 'category' => 'Printed copy', 'sort_order' => 12],
+            ['name' => 'A4 with frame', 'description' => 'black, wood & white', 'price' => 380, 'category' => 'Printed copy', 'sort_order' => 13],
+            ['name' => 'Number Balloon', 'description' => '2ft cream caramel in color', 'price' => 50, 'category' => null, 'sort_order' => 14],
+            ['name' => 'Fake Cake', 'description' => null, 'price' => 60, 'category' => null, 'sort_order' => 15],
+            ['name' => '10 minutes', 'description' => null, 'price' => 500, 'category' => "Photographer's Fee", 'sort_order' => 16],
+            ['name' => '20 minutes', 'description' => null, 'price' => 700, 'category' => "Photographer's Fee", 'sort_order' => 17],
+            ['name' => '30 minutes', 'description' => null, 'price' => 900, 'category' => "Photographer's Fee", 'sort_order' => 18],
+            ['name' => '1 hour', 'description' => null, 'price' => 1250, 'category' => "Photographer's Fee", 'sort_order' => 19],
+            ['name' => 'Hair & Make up Artist', 'description' => null, 'price' => 1800, 'category' => null, 'sort_order' => 20],
         ];
 
         foreach ($addons as $addon) {
-            Addon::updateOrCreate(['name' => $addon['name']], $addon);
+            Addon::updateOrCreate(['name' => $addon['name']], $addon + ['is_active' => true]);
         }
     }
 }

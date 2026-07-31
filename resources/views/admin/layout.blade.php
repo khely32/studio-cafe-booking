@@ -592,6 +592,7 @@
                     ['route' => 'admin.pages.index', 'label' => 'Pages', 'data-page' => 'Pages'],
                     ['route' => 'admin.bookings', 'label' => 'Bookings', 'data-page' => 'Bookings'],
                     ['route' => 'admin.services.index', 'label' => 'Services', 'data-page' => 'Services'],
+                    ['route' => 'admin.addons.index', 'label' => 'Add-Ons', 'data-page' => 'Add-Ons'],
                     ['route' => 'admin.team.index', 'label' => 'Team', 'data-page' => 'Team'],
                     ['route' => 'admin.templates.index', 'label' => 'Templates', 'data-page' => 'Templates'],
                     ['route' => 'admin.analytics', 'label' => 'Analytics', 'data-page' => 'Analytics'],

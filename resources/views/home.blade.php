@@ -317,39 +317,28 @@ THANK YOU AND SEE YOU!
     <div class="policy-card">
         <h3>Add-Ons</h3>
         <div class="policy-content">
-<strong>Extra person</strong><br>
-Adult (7 y/o up) — ₱249<br>
-Kids (6 y/o below) — ₱199<br>
-Infant 5 months and below — FREE
-
-<strong>Pets</strong><br>
-1 Pet — FREE<br>
-Extra pet — ₱199
-
-<strong>Extend time</strong><br>
-10 minutes — ₱249
-
-<strong>Additional Backdrop</strong> — ₱199<br>
-(Beige, tropical green, Chocolate brown, black and White)
-
-<strong>Printed copy</strong><br>
-4R — ₱80<br>
-5R — ₱110<br>
-Photo card 2 pcs — ₱100<br>
-Photo strip 2 pcs — ₱100<br>
-A4 — ₱150<br>
-A4 with frame — ₱380 (black, wood &amp; white)
-
-Number Balloon — ₱50 (2ft cream caramel in color)<br>
-Fake Cake — ₱60
-
-<strong>Photographer's Fee</strong><br>
-10 minutes — ₱500<br>
-20 minutes — ₱700<br>
-30 minutes — ₱900<br>
-1 hour — ₱1,250
-
-Hair &amp; Make up Artist — ₱1,800
+            @php
+                $groups = [];
+                foreach ($addons as $a) {
+                    $key = $a->category ?: '@' . $a->id;
+                    if (!isset($groups[$key])) {
+                        $groups[$key] = ['category' => $a->category, 'items' => []];
+                    }
+                    $groups[$key]['items'][] = $a;
+                }
+            @endphp
+            @foreach($groups as $group)
+                @if($group['category'])
+<strong>{{ $group['category'] }}</strong><br>
+                @endif
+                @foreach($group['items'] as $a)
+                    @if((float)$a->price > 0)
+{{ $a->name }} — ₱{{ number_format((float)$a->price, 0) }}{{ $a->description ? ' (' . $a->description . ')' : '' }}<br>
+                    @else
+{{ $a->name }} — FREE{{ $a->description ? ' (' . $a->description . ')' : '' }}<br>
+                    @endif
+                @endforeach
+            @endforeach
         </div>
     </div>
 </section>

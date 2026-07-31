@@ -13,7 +13,8 @@ use App\Http\Controllers\ClientDashboardController;
 
 Route::get('/', function () {
     $services = \App\Models\Service::active()->get();
-    return view('home', compact('services'));
+    $addons = \App\Models\Addon::active()->orderBy('sort_order')->get();
+    return view('home', compact('services', 'addons'));
 })->name('home');
 
 Route::get('/studio', function () {
@@ -56,6 +57,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::delete('/folders/{folder}', [\App\Http\Controllers\Admin\FolderController::class, 'destroy'])->name('folders.destroy');
     Route::post('/settings/slack', [AdminController::class, 'saveSlack'])->name('settings.slack');
     Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class);
+    Route::resource('addons', \App\Http\Controllers\Admin\AddonController::class);
     Route::resource('team', TeamController::class);
     Route::resource('templates', TemplateController::class);
     Route::resource('polls', PollController::class)->except(['show']);
