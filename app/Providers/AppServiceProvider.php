@@ -23,5 +23,13 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
         \Illuminate\Support\Facades\URL::forceRootUrl(request()->getSchemeAndHttpHost());
+
+        if (config('database.default') === 'pgsql' && ! \Illuminate\Support\Facades\Schema::hasTable('migrations')) {
+            try {
+                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
     }
 }
