@@ -39,6 +39,18 @@ $_SERVER['SESSION_DRIVER'] = 'cookie';
 $_ENV['VIEW_COMPILED_PATH'] = '/tmp';
 $_SERVER['VIEW_COMPILED_PATH'] = '/tmp';
 
+/*
+| Neon (Vercel Postgres) requires the endpoint ID when the client's libpq
+| does not support SNI. Pass it via PGOPTIONS, which libpq reads at connect.
+*/
+$pgHost = $_SERVER['PGHOST'] ?? getenv('PGHOST') ?: '';
+if ($pgHost !== '' && str_starts_with($pgHost, 'ep-')) {
+    $endpointId = explode('.', $pgHost)[0];
+    if ($endpointId !== '') {
+        putenv('PGOPTIONS=endpoint=' . $endpointId);
+    }
+}
+
 register_shutdown_function(function () {
     $error = error_get_last();
     if ($error && ($error['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR))) {
