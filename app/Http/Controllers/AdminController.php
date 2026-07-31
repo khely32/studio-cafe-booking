@@ -83,11 +83,30 @@ class AdminController extends Controller
 
     public function updateStatus(Booking $booking, Request $request)
     {
-        $request->validate([
-            'status' => 'required|in:pending,confirmed,completed,cancelled,no_show',
+        $request->merge(['status' => strtolower(trim((string) $request->input('status')))]);
+
+        $validated = $request->validate([
+            'status' => 'required|in:accepted,undecided,cancelled,pending,confirmed,completed,no_show',
         ]);
 
-        $booking->update(['status' => $request->status]);
+        $stored = match ($validated['status']) {
+            'accepted' => 'confirmed',
+            'undecided' => 'pending',
+            default => $validated['status'],
+        };
+
+        $booking->update(['status' => $stored]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully',
+                'data' => [
+                    'id' => $booking->id,
+                    'status' => $stored,
+                ],
+            ], 200);
+        }
 
         return redirect()->back()->with('success', 'Booking status updated.');
     }

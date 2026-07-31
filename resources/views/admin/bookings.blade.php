@@ -885,17 +885,20 @@ function cancelBooking() {
 function setBookingStatus(ui) {
     const b = bookingList[bookingIndex];
     if (!b || b.uiStatus === ui) return;
-    const map = { accepted: 'confirmed', undecided: 'pending', cancelled: 'cancelled' };
     fetch(adminBookingsBase + '/' + b.id + '/status', {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
         },
-        body: JSON.stringify({ status: map[ui] })
+        body: JSON.stringify({ status: ui })
     }).then(function (r) {
         if (!r.ok) throw new Error('update failed');
-        b.rawStatus = map[ui];
+        return r.json();
+    }).then(function (data) {
+        if (!data.success) throw new Error('update failed');
+        b.rawStatus = data.data.status;
         b.uiStatus = ui;
         if (ui === 'accepted') { b.statusLabel = 'Accepted'; b.statusClass = 'accepted'; }
         else if (ui === 'cancelled') { b.statusLabel = 'Cancelled'; b.statusClass = 'cancelled'; }
