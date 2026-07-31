@@ -24,9 +24,11 @@ class AppServiceProvider extends ServiceProvider
         }
         \Illuminate\Support\Facades\URL::forceRootUrl(request()->getSchemeAndHttpHost());
 
-        if (config('database.default') === 'pgsql' && ! \Illuminate\Support\Facades\Schema::hasTable('migrations')) {
+        if (! $this->app->runningInConsole() && config('database.default') === 'pgsql') {
             try {
-                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                if (! \Illuminate\Support\Facades\Schema::hasTable('migrations')) {
+                    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                }
             } catch (\Throwable $e) {
                 report($e);
             }

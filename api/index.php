@@ -40,12 +40,26 @@ $_ENV['VIEW_COMPILED_PATH'] = '/tmp';
 $_SERVER['VIEW_COMPILED_PATH'] = '/tmp';
 
 /*
+| Mirror Vercel's database env vars into $_ENV so Laravel's env()/config()
+| helpers resolve them regardless of how the platform exposes them.
+*/
+foreach (['PGHOST', 'PGHOST_UNPOOLED', 'PGDATABASE', 'PGUSER', 'PGPASSWORD', 'PGPORT', 'DATABASE_URL'] as $pgVar) {
+    if (isset($_SERVER[$pgVar]) && ! isset($_ENV[$pgVar])) {
+        $_ENV[$pgVar] = $_SERVER[$pgVar];
+    }
+}
+
+/*
 | Neon (Vercel Postgres) requires the endpoint ID when the client's libpq
 | does not support SNI. Pass it via PGOPTIONS, which libpq reads at connect.
+| Vercel's pooled hostname appends "-pooler" to the endpoint ID, so strip it.
 */
 $pgHost = $_SERVER['PGHOST'] ?? getenv('PGHOST') ?: '';
+if ($pgHost === '' && isset($_SERVER['PGHOST_UNPOOLED'])) {
+    $pgHost = $_SERVER['PGHOST_UNPOOLED'];
+}
 if ($pgHost !== '' && str_starts_with($pgHost, 'ep-')) {
-    $endpointId = explode('.', $pgHost)[0];
+    $endpointId = preg_replace('/-pooler$/', '', explode('.', $pgHost)[0]);
     if ($endpointId !== '') {
         putenv('PGOPTIONS=endpoint=' . $endpointId);
     }
