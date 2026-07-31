@@ -151,33 +151,46 @@
 /* 3-dot action menu */
 .bk-menu { position: relative; display: inline-flex; }
 .bk-action {
-    color: #9CA3AF; cursor: pointer; padding: 6px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #E5E7EB; color: #374151; cursor: pointer; padding: 0;
     display: inline-flex; align-items: center; justify-content: center;
-    border-radius: 8px; transition: all 0.15s; background: none; border: none;
-    font-family: inherit;
+    transition: all 0.15s; border: none; font-family: inherit;
 }
-.bk-action:hover { background: #F3F4F6; color: #111827; }
+.bk-action:hover { background: #D1D5DB; color: #111827; }
 .bk-action svg { width: 16px; height: 16px; }
 .bk-menu-drop {
-    position: absolute; top: calc(100% + 6px); right: 0;
-    background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+    position: absolute; top: calc(100% + 8px); right: 0;
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 14px;
     box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-    min-width: 170px; padding: 6px; z-index: 400;
+    min-width: 200px; padding: 6px; z-index: 400;
     display: none;
 }
 .bk-menu-drop.open { display: block; }
 .bk-menu-drop a, .bk-menu-drop button {
-    display: flex; align-items: center; gap: 8px;
-    width: 100%; padding: 9px 12px; border-radius: 8px;
-    font-size: 13px; color: #374151; cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; padding: 9px 12px; border-radius: 10px;
+    font-size: 13px; font-weight: 500; color: #374151; cursor: pointer;
     text-decoration: none; background: none; border: none;
     font-family: inherit; text-align: left; transition: background 0.15s;
 }
 .bk-menu-drop a:hover, .bk-menu-drop button:hover { background: #F9FAFB; color: #111827; }
+.bk-menu-drop .menu-item-details:focus-visible {
+    outline: 2px solid #10B981; outline-offset: -2px; border-radius: 10px;
+}
+.bk-menu-drop .menu-item-details:focus { outline: 2px solid #10B981; outline-offset: -2px; }
 .bk-menu-drop button.danger { color: #DC2626; }
 .bk-menu-drop button.danger:hover { background: #FEF2F2; }
-.bk-menu-drop svg { width: 15px; height: 15px; color: #9CA3AF; }
-.bk-menu-drop .menu-divider { height: 1px; background: #F3F4F6; margin: 4px 6px; }
+.bk-menu-drop .m-icon {
+    width: 18px; height: 18px; color: #6B7280; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.bk-menu-drop .m-icon svg { width: 16px; height: 16px; }
+.bk-menu-drop .crown-badge {
+    width: 14px; height: 14px; margin-left: auto; color: #9CA3AF;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #F3F4F6; border-radius: 50%;
+}
+.bk-menu-drop .crown-badge svg { width: 9px; height: 9px; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 .anim { animation: fadeUp 0.4s cubic-bezier(0.4,0,0.2,1) both; }
@@ -324,31 +337,29 @@
                     <td><span class="badge-status {{ $statusClass }}">{{ $statusLabel }}</span></td>
                     <td>
                         <div class="bk-menu">
-                            <button class="bk-action" onclick="toggleMenu(this)">
+                            <button class="bk-action" onclick="toggleMenu(this)" aria-label="Actions">
                                 <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
                             </button>
                             <div class="bk-menu-drop">
-                                <a href="{{ route('admin.booking.detail', $b) }}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                                    View details
+                                <a href="{{ route('admin.booking.detail', $b) }}" class="menu-item-details" tabindex="0">
+                                    <span class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 15 11 17 15 13"/></svg></span>
+                                    Details
                                 </a>
-                                @if(!$isAccepted && !$isCancelled)
-                                <form method="POST" action="{{ route('admin.booking.update', $b) }}">
-                                    @csrf @method('PATCH')
-                                    <input type="hidden" name="status" value="confirmed">
-                                    <button type="submit">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                        Mark as accepted
-                                    </button>
-                                </form>
-                                @endif
-                                <div class="menu-divider"></div>
+                                <a href="{{ $b->service ? route('booking.service', $b->service) : route('booking.index') }}">
+                                    <span class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></span>
+                                    Rebook
+                                    <span class="crown-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18h20l-1.5-2H3.5L2 18zM4 16l1.5-8L10 11l2-5 2 5 4.5-3L20 16H4z"/></svg></span>
+                                </a>
+                                <a href="{{ $b->service ? route('booking.service', $b->service) : route('booking.index') }}">
+                                    <span class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>
+                                    Reschedule
+                                </a>
                                 <form method="POST" action="{{ route('admin.booking.update', $b) }}" onsubmit="return confirm('Cancel this booking?')">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="status" value="cancelled">
                                     <button type="submit" class="danger">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                        Cancel booking
+                                        <span class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="14" x2="15" y2="20"/><line x1="15" y1="14" x2="9" y2="20"/></svg></span>
+                                        Cancel
                                     </button>
                                 </form>
                             </div>
