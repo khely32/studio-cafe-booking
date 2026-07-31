@@ -38,6 +38,17 @@ Route::get('/api/payment-reminders', function () {
     return response('OK');
 });
 
+Route::get('/api/backup-db', function () {
+    $secret = env('VERCEL_CRON_SECRET');
+    if ($secret) {
+        abort_unless(request()->header('Authorization') === 'Bearer ' . $secret, 403);
+    }
+
+    \App\Jobs\ExportDatabaseBackup::dispatchSync();
+
+    return response('OK');
+});
+
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 

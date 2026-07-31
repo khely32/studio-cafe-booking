@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'backup' => [
+        'repo' => env('BACKUP_REPO'),
+        'token' => env('BACKUP_GITHUB_TOKEN'),
+        'keep' => env('BACKUP_KEEP', 30),
+    ],
+
 ];
