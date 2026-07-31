@@ -21,6 +21,7 @@ class Booking extends Model
         'booking_time',
         'special_requests',
         'internal_notes',
+        'payment_reminder_sent_at',
         'total_amount',
         'amount_paid',
         'payment_method',

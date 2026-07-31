@@ -44,5 +44,11 @@
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
         "VIEW_COMPILED_PATH": "/tmp"
-    }
+    },
+    "crons": [
+        {
+            "path": "/api/payment-reminders",
+            "schedule": "0 0 * * *"
+        }
+    ]
 }

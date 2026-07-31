@@ -27,6 +27,17 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/api/payment-reminders', function () {
+    $secret = env('VERCEL_CRON_SECRET');
+    if ($secret) {
+        abort_unless(request()->header('Authorization') === 'Bearer ' . $secret, 403);
+    }
+
+    \App\Jobs\SendPaymentReminders::dispatchSync();
+
+    return response('OK');
+});
+
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
