@@ -51,6 +51,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/bookings', [AdminController::class, 'bookings'])->name('bookings');
     Route::get('/bookings/{booking}', [AdminController::class, 'bookingDetail'])->name('booking.detail');
     Route::patch('/bookings/{booking}/status', [AdminController::class, 'updateStatus'])->name('booking.update');
+    Route::patch('/bookings/{booking}/note', [AdminController::class, 'updateNote'])->name('booking.note');
+    Route::delete('/bookings/{booking}', [AdminController::class, 'destroy'])->name('booking.delete');
 
     Route::resource('pages', PageController::class);
     Route::post('/pages/{page}/duplicate', [PageController::class, 'duplicate'])->name('pages.duplicate');

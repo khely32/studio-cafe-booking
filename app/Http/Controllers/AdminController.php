@@ -98,6 +98,27 @@ class AdminController extends Controller
         return view('admin.detail', compact('booking'));
     }
 
+    public function updateNote(Booking $booking, Request $request)
+    {
+        $request->validate([
+            'internal_notes' => 'nullable|string|max:5000',
+        ]);
+
+        $booking->update(['internal_notes' => $request->internal_notes ?? '']);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return redirect()->back()->with('success', 'Note saved.');
+    }
+
+    public function destroy(Booking $booking)
+    {
+        $booking->delete();
+        return redirect()->route('admin.bookings')->with('success', 'Booking deleted.');
+    }
+
     public function saveSlack(Request $request)
     {
         $request->validate(['slack_webhook_url' => 'nullable|url']);

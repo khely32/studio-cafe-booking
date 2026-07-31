@@ -20,6 +20,7 @@ class Booking extends Model
         'booking_date',
         'booking_time',
         'special_requests',
+        'internal_notes',
         'total_amount',
         'amount_paid',
         'payment_method',
