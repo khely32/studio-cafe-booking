@@ -75,6 +75,9 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::resource('addons', \App\Http\Controllers\Admin\AddonController::class);
     Route::get('/settings/homepage', [\App\Http\Controllers\Admin\SettingsController::class, 'homepage'])->name('settings.homepage');
     Route::post('/settings/homepage', [\App\Http\Controllers\Admin\SettingsController::class, 'updateHomepage'])->name('settings.homepage.update');
+    Route::get('/settings/reminders', [\App\Http\Controllers\Admin\SettingsController::class, 'reminders'])->name('settings.reminders');
+    Route::post('/settings/reminders', [\App\Http\Controllers\Admin\SettingsController::class, 'updateReminders'])->name('settings.reminders.update');
+    Route::post('/settings/reminders/run', [\App\Http\Controllers\Admin\SettingsController::class, 'runReminders'])->name('settings.reminders.run');
     Route::resource('team', TeamController::class);
     Route::resource('templates', TemplateController::class);
     Route::resource('polls', PollController::class)->except(['show']);
