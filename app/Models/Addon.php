@@ -9,7 +9,7 @@ class Addon extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'price', 'is_active'];
+    protected $fillable = ['name', 'description', 'price', 'is_active', 'category', 'sort_order'];
 
     protected $casts = [
         'price' => 'decimal:2',
