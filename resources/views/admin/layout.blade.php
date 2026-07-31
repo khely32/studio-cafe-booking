@@ -153,6 +153,14 @@
             transition: all 0.2s; position: relative;
         }
         .tn-avatar:hover { box-shadow: 0 0 0 3px rgba(15,118,110,0.2); }
+        .tn-notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            background: #EF4444; color: #fff;
+            font-size: 10px; font-weight: 700; line-height: 1;
+            min-width: 16px; height: 16px; padding: 0 3px;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            border: 2px solid #fff; box-sizing: content-box;
+        }
 
         .tn-dropdown {
             position: absolute; top: calc(100% + 8px); right: 0;
@@ -609,14 +617,14 @@
             @endforeach
         </nav>
         <div class="topnav-right">
-            <button class="tn-btn" onclick="toggleDarkMode()" aria-label="Toggle dark mode" id="darkModeBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <button class="tn-btn" aria-label="SMS credits">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
             </button>
             <button class="tn-btn" aria-label="Help">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </button>
             <div style="position:relative;">
-                <div class="tn-avatar" onclick="toggleProfileDropdown()" id="profileBtn" tabindex="0" role="button" aria-label="Profile menu">A</div>
+                <div class="tn-avatar" onclick="toggleProfileDropdown()" id="profileBtn" tabindex="0" role="button" aria-label="Profile menu">A<span class="tn-notif-badge">1</span></div>
                 <div class="tn-dropdown" id="profileDropdown">
                     <div style="padding:12px;border-bottom:1px solid #F3F4F6;margin-bottom:4px;">
                         <div style="font-weight:600;font-size:14px;color:#111;">Admin</div>
