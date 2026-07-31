@@ -156,7 +156,7 @@ class ServiceSeeder extends Seeder
         ];
 
         foreach ($addons as $addon) {
-            Addon::create($addon);
+            Addon::updateOrCreate(['name' => $addon['name']], $addon);
         }
     }
 }

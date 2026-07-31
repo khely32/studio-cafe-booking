@@ -167,7 +167,6 @@ class BookingController extends Controller
             : $totalAmount;
 
         $booking = Booking::create([
-            'booking_ref' => strtoupper(uniqid()),
             'service_id' => $validated['service_id'],
             'customer_name' => $validated['customer_name'],
             'customer_email' => $validated['customer_email'],

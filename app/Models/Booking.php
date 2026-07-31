@@ -41,7 +41,11 @@ class Booking extends Model
     {
         static::creating(function (Booking $booking) {
             if (empty($booking->booking_ref)) {
-                $booking->booking_ref = strtoupper(Str::random(4) . '-' . Str::random(4));
+                do {
+                    $ref = strtoupper(Str::random(4) . '-' . Str::random(4));
+                } while (static::where('booking_ref', $ref)->exists());
+
+                $booking->booking_ref = $ref;
             }
         });
     }
