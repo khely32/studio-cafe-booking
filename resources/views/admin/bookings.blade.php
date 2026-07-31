@@ -247,6 +247,20 @@
 .bm-hero-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; color: #374151; }
 .bm-hero-row:first-child { margin-top: 0; }
 .bm-hero-row svg { width: 15px; height: 15px; color: #9CA3AF; flex-shrink: 0; }
+
+/* Status editor */
+.bm-status-editor { gap: 8px; margin-top: 12px; }
+.bm-status-btn {
+    border: 1px solid #E5E7EB; background: #fff; color: #6B7280;
+    padding: 5px 14px; border-radius: 9999px; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; font-family: inherit; line-height: 1.4;
+}
+.bm-status-btn:hover { border-color: #D1D5DB; color: #374151; }
+.bm-status-btn.active.accepted { background: #1A3B32; border-color: #1A3B32; color: #fff; }
+.bm-status-btn.active.undecided { background: #B45309; border-color: #B45309; color: #fff; }
+.bm-status-btn.active.cancelled { background: #B91C1C; border-color: #B91C1C; color: #fff; }
+.bm-status-saved { font-size: 12px; color: #10B981; font-weight: 600; opacity: 0; transition: opacity 0.2s; }
+.bm-status-saved.show { opacity: 1; }
 .bm-hero .bm-link { color: #2563EB; text-decoration: none; }
 .bm-hero .bm-link:hover { text-decoration: underline; }
 .bm-hero .bm-badge { margin-right: 6px; }
@@ -464,7 +478,7 @@
                 @endphp
                 <tr onclick="openBookingModal({{ $b->id }})" style="cursor:pointer;">
                     <td style="width:4px;padding:0;">
-                        <div class="bk-accent {{ $statusClass }}"></div>
+                        <div class="bk-accent {{ $statusClass }}" id="row-accent-{{ $b->id }}"></div>
                     </td>
                     <td><span class="td-date">{{ \Carbon\Carbon::parse($b->booking_date)->format('D M j, Y') }}</span></td>
                     <td><span class="td-time">{{ \Carbon\Carbon::parse($b->booking_time)->format('g:i A') }}</span></td>
@@ -475,7 +489,7 @@
                     </td>
                     <td style="color:#9CA3AF;font-size:12px;">&mdash;</td>
                     <td><span class="td-type">{{ $b->service->name ?? 'Booking' }}</span></td>
-                    <td><span class="badge-status {{ $statusClass }}">{{ $statusLabel }}</span></td>
+                    <td><span class="badge-status {{ $statusClass }}" id="row-status-{{ $b->id }}">{{ $statusLabel }}</span></td>
                     <td>
                         <div class="bk-menu" onclick="event.stopPropagation();">
                             <button class="bk-action" onclick="toggleMenu(this)" aria-label="Actions">
@@ -538,6 +552,8 @@
             'phone' => $b->customer_phone ?? '',
             'statusLabel' => $bl,
             'statusClass' => $bc,
+            'rawStatus' => $b->status,
+            'uiStatus' => $acc ? 'accepted' : ($can ? 'cancelled' : 'undecided'),
             'dateFull' => $b->booking_date->format('l, F jS, Y'),
             'duration' => $dur >= 60 ? floor($dur/60).' hour'.($dur>=120?'s':'').($dur%60 ? ' '.($dur%60).' minutes' : '') : $dur.' minutes',
             'startTime' => $start->format('g:i A'),
@@ -572,6 +588,12 @@
                 <div class="bm-hero-row">
                     <span class="badge-status" id="bm-status">Accepted</span>
                     <span style="font-size:13px;color:#6B7280;" id="bm-service"></span>
+                </div>
+                <div class="bm-hero-row bm-status-editor">
+                    <button type="button" class="bm-status-btn accepted" id="bm-status-btn-accepted" onclick="setBookingStatus('accepted')">Accept</button>
+                    <button type="button" class="bm-status-btn undecided" id="bm-status-btn-undecided" onclick="setBookingStatus('undecided')">Undecided</button>
+                    <button type="button" class="bm-status-btn cancelled" id="bm-status-btn-cancelled" onclick="setBookingStatus('cancelled')">Cancel</button>
+                    <span class="bm-status-saved" id="bm-status-saved">Status updated.</span>
                 </div>
                 <div class="bm-hero-row">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -812,6 +834,13 @@ function renderBooking() {
     badge.textContent = b.statusLabel;
     document.getElementById('bm-service').textContent = b.service;
 
+    ['accepted', 'undecided', 'cancelled'].forEach(function (s) {
+        const btn = document.getElementById('bm-status-btn-' + s);
+        if (btn) btn.classList.toggle('active', b.uiStatus === s);
+    });
+    const saved = document.getElementById('bm-status-saved');
+    if (saved) saved.classList.remove('show');
+
     document.getElementById('bm-date').textContent = b.dateFull;
     document.getElementById('bm-time').textContent = b.duration + ' \u2022 ' + b.startTime + ' \u2014 ' + b.endTime + ' (Asia/Manila)';
 
@@ -851,6 +880,44 @@ function cancelBooking() {
     const form = document.getElementById('bm-cancel-form');
     form.action = adminBookingsBase + '/' + b.id + '/status';
     form.submit();
+}
+
+function setBookingStatus(ui) {
+    const b = bookingList[bookingIndex];
+    if (!b || b.uiStatus === ui) return;
+    const map = { accepted: 'confirmed', undecided: 'pending', cancelled: 'cancelled' };
+    fetch(adminBookingsBase + '/' + b.id + '/status', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+        },
+        body: JSON.stringify({ status: map[ui] })
+    }).then(function (r) {
+        if (!r.ok) throw new Error('update failed');
+        b.rawStatus = map[ui];
+        b.uiStatus = ui;
+        if (ui === 'accepted') { b.statusLabel = 'Accepted'; b.statusClass = 'accepted'; }
+        else if (ui === 'cancelled') { b.statusLabel = 'Cancelled'; b.statusClass = 'cancelled'; }
+        else { b.statusLabel = 'Undecided'; b.statusClass = 'undecided'; }
+        renderBooking();
+        updateRowStatus(b);
+        const saved = document.getElementById('bm-status-saved');
+        if (saved) {
+            saved.classList.add('show');
+            clearTimeout(saved._t);
+            saved._t = setTimeout(function () { saved.classList.remove('show'); }, 2500);
+        }
+    }).catch(function () {
+        alert('Could not update the status. Please try again.');
+    });
+}
+
+function updateRowStatus(b) {
+    const badge = document.getElementById('row-status-' + b.id);
+    const accent = document.getElementById('row-accent-' + b.id);
+    if (badge) { badge.className = 'badge-status ' + b.statusClass; badge.textContent = b.statusLabel; }
+    if (accent) accent.className = 'bk-accent ' + b.statusClass;
 }
 
 function deleteBooking() {
