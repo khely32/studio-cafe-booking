@@ -48,4 +48,12 @@ register_shutdown_function(function () {
     }
 });
 
-require __DIR__ . '/../public/index.php';
+try {
+    require __DIR__ . '/../public/index.php';
+} catch (\Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: text/plain');
+    echo 'PROPAGATED: '.get_class($e).': '.$e->getMessage()."\n";
+    echo $e->getFile().':'.$e->getLine()."\n";
+    echo substr($e->getTraceAsString(), 0, 4000);
+}
