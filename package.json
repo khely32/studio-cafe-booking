@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "echo \"Frontend assets are inline; no vite build needed on Vercel.\"",
         "dev": "vite"
     },
     "devDependencies": {

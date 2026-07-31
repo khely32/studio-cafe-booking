@@ -24,7 +24,7 @@
     .hero-watermark {
         position: absolute; top: 50%; left: 50%;
         transform: translate(-50%, -50%) rotate(-12deg);
-        font-family: 'Playfair Display', serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 120px; font-weight: 700; white-space: nowrap;
         color: rgba(255,255,255,0.06); z-index: 1;
         pointer-events: none; user-select: none;
@@ -39,7 +39,7 @@
         margin-bottom: 32px; animation: fadeInUp 0.8s ease;
     }
     .hero h1 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 72px; font-weight: 700; color: #fff;
         line-height: 1.1; margin-bottom: 20px;
         letter-spacing: -1px; animation: fadeInUp 0.8s ease 0.1s both;
@@ -76,7 +76,7 @@
     }
 
     /* === FEATURES === */
-    .features-section { padding: 100px 40px; background: var(--white); }
+    .features-section { padding: 100px 40px; position: relative; }
     .features-grid {
         max-width: 1000px; margin: 0 auto;
         display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
@@ -93,13 +93,13 @@
     .feature-icon.amber { background: linear-gradient(135deg, #FDF0E0, #F5E0C4); }
     .feature-icon.warm { background: linear-gradient(135deg, #F5EDE0, #EDE3D3); }
     .feature-item h3 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 18px; font-weight: 600; margin-bottom: 8px;
     }
     .feature-item p { font-size: 14px; color: var(--gray-500); line-height: 1.7; }
 
     /* === PACKAGES === */
-    .packages-section { padding: 100px 40px; background: var(--bg); }
+    .packages-section { padding: 100px 40px; position: relative; }
     .section-header { text-align: center; margin-bottom: 60px; }
     .section-header .accent {
         display: inline-block; font-size: 12px; font-weight: 600;
@@ -108,7 +108,7 @@
         -webkit-text-fill-color: transparent; background-clip: text;
     }
     .section-header h2 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 40px; font-weight: 700; margin-bottom: 12px;
         letter-spacing: -0.5px;
     }
@@ -123,6 +123,7 @@
         overflow: hidden; transition: all 0.4s ease;
         border: 1px solid var(--gray-200);
         cursor: pointer; position: relative;
+        box-shadow: 0 10px 35px rgba(0,0,0,.08);
     }
     .package-card:hover {
         transform: translateY(-6px);
@@ -152,7 +153,7 @@
     }
     .package-card-body { padding: 28px; }
     .package-card-body h3 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 20px; font-weight: 700; margin-bottom: 10px;
     }
     .package-card-body .description {
@@ -169,20 +170,20 @@
     .package-meta span { display: flex; align-items: center; gap: 6px; }
 
     /* === POLICY === */
-    .policy-section { padding: 80px 40px; background: var(--white); }
+    .policy-section { padding: 80px 40px; position: relative; }
     .policy-card {
         max-width: 900px; margin: 0 auto;
         background: #fff; border-radius: var(--radius-xl);
         padding: 48px; position: relative; overflow: hidden;
         border: 1px solid var(--gray-200);
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 10px 35px rgba(0,0,0,.08);
     }
     .policy-card::before {
         content: ''; position: absolute; top: 0; left: 0; right: 0;
         height: 4px; background: var(--gradient-1);
     }
     .policy-card h3 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Poppins', sans-serif;
         font-size: 24px; font-weight: 700; margin-bottom: 24px;
     }
     .policy-card .policy-content {
@@ -190,6 +191,16 @@
         white-space: pre-line;
     }
     .policy-card .policy-content strong { color: var(--gray-800); }
+
+    /* === DECORATIVE ELEMENTS PER SECTION === */
+    .features-section .decor-coffee { position: absolute; top: 20px; right: 30px; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(200,169,106,0.1); pointer-events: none; }
+    .features-section .decor-coffee::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(200,169,106,0.08); }
+
+    .packages-section .decor-coffee { position: absolute; bottom: 40px; left: 40px; width: 60px; height: 60px; border-radius: 50%; border: 1px solid rgba(200,169,106,0.08); pointer-events: none; }
+    .packages-section .decor-coffee::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(200,169,106,0.06); }
+
+    .policy-section .decor-coffee { position: absolute; top: 40px; left: 40px; width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(200,169,106,0.07); pointer-events: none; }
+    .policy-section .decor-coffee::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 25px; height: 25px; border-radius: 50%; border: 1px solid rgba(200,169,106,0.05); }
 
     @media (max-width: 768px) {
         .hero h1 { font-size: 40px; }
@@ -223,31 +234,56 @@
     <div class="hero-scroll">Scroll</div>
 </section>
 
+{{-- FEATURES --}}
+<section class="features-section section-cream">
+    <div class="decor-coffee"></div>
+    <div class="features-grid">
+        <div class="feature-item">
+            <div class="feature-icon cafe">📷</div>
+            <h3>Self-Capture Studio</h3>
+            <p>Professional lighting and backdrops with remote-controlled cameras. Just you, the camera, and your creativity.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon amber">☕</div>
+            <h3>Specialty Coffee Shop</h3>
+            <p>Enjoy a warm cup of coffee while you wait. A cozy space designed for creatives, photographers, and dreamers.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon warm">✨</div>
+            <h3>Premium Experience</h3>
+            <p>From curated props to custom backdrops, every detail is crafted to make your session effortless and beautiful.</p>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
 {{-- POLICY & GUIDES --}}
-<section class="policy-section" id="policy">
+<section class="policy-section section-warm-beige" id="policy">
+    <div class="decor-coffee"></div>
     <div class="policy-card">
         <h3>Reminders and Payment Policy</h3>
         <div class="policy-content">
             <strong>Choose an appointment type.</strong>
 
-∙ To confirm your session, kindly settle payment to any of the following:
+· To confirm your session, kindly settle payment to any of the following:
 
 <strong>GCash / PayMaya</strong><br>
 Ma. Jaliha Unlayao<br>
 09533651548
 
 You can choose to pay full package price or 50% down payment fee to reserve the time slot.
-∙ Add-on fees and remaining balance will be settled right after the session.
-∙ Your confirmed slot is non-refundable but can be re-scheduled.
-∙ Re-scheduling should be made 1-2 days before the scheduled time slot.
+· Add-on fees and remaining balance will be settled right after the session.
+· Your confirmed slot is non-refundable but can be re-scheduled.
+· Re-scheduling should be made 1-2 days before the scheduled time slot.
 
 Please settle your payment within the day and send proof of payment thru FB page messenger (Required)
 
 <strong>SHOWING UP LATE</strong>
 
-∙ Please be on time. We have a 10-minutes grace period before we start the photoshoot timer. (Retouch and you can change of outfit)
-∙ If you arrive later than 15 minutes, your photoshoot time will be reduced.
-∙ No show means cancelled slot. (down payment will be forfeited)
+· Please be on time. We have a 10-minutes grace period before we start the photoshoot timer. (Retouch and you can change of outfit)
+· If you arrive later than 15 minutes, your photoshoot time will be reduced.
+· No show means cancelled slot. (down payment will be forfeited)
 
 I have read and agree to 56'30 Studio's Policy (Required)
 
@@ -258,24 +294,26 @@ THANK YOU AND SEE YOU!
     <div class="policy-card" style="margin-top:24px;">
         <h3>Studio Guides</h3>
         <div class="policy-content">
-∙ This is a self-capture studio. just you, the camera, and remote.
-∙ Photographer is also available by client's request. (additional charge on your chosen package)
-∙ Receive all soft copies the within 1 day through Google drive, 2 to 3 days for those who avail with photographer session.
-∙ For special packages and add-ons, you will select photos for printing after photoshoot (7 to 15 minutes selection and printing time)
-∙ 1 backdrop color of your choice. Additional P199 fee per backdrop change.
-∙ Free use of all props at the studio: sunglasses, headbands, artificial flowers, crowns &amp; sash.
-∙ You can bring your own props: balloons, fresh flowers, cake, costumes, etc.
-∙ No hair and makeup time before photoshoot. Retouch only. (except for client with HMUA appointment)
-∙ You can bring your own hair and makeup artist. Book the studio (P700 per hour) before your photoshoot time slot for hair and makeup session.
-∙ Babies are free of charge (5 months and below)
-∙ We are a pet-friendly studio. Pets must be on leash and in diapers before and after the photoshoot.
-∙ Food and drinks are not allowed inside the studio. We have waiting area and cafe where you can eat your snacks.
+· This is a self-capture studio. just you, the camera, and remote.
+· Photographer is also available by client's request. (additional charge on your chosen package)
+· Receive all soft copies the within 1 day through Google drive, 2 to 3 days for those who avail with photographer session.
+· For special packages and add-ons, you will select photos for printing after photoshoot (7 to 15 minutes selection and printing time)
+· 1 backdrop color of your choice. Additional P199 fee per backdrop change.
+· Free use of all props at the studio: sunglasses, headbands, artificial flowers, crowns &amp; sash.
+· You can bring your own props: balloons, fresh flowers, cake, costumes, etc.
+· No hair and makeup time before photoshoot. Retouch only. (except for client with HMUA appointment)
+· You can bring your own hair and makeup artist. Book the studio (P700 per hour) before your photoshoot time slot for hair and makeup session.
+· Babies are free of charge (5 months and below)
+· We are a pet-friendly studio. Pets must be on leash and in diapers before and after the photoshoot.
+· Food and drinks are not allowed inside the studio. We have waiting area and cafe where you can eat your snacks.
         </div>
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 {{-- ADD-ONS --}}
-<section class="policy-section" style="padding-top:0;">
+<section class="policy-section section-coffee-latte" style="padding-top:80px;">
     <div class="policy-card">
         <h3>Add-Ons</h3>
         <div class="policy-content">
@@ -316,8 +354,11 @@ Hair &amp; Make up Artist — ₱1,800
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 {{-- PACKAGES --}}
-<section class="packages-section" id="packages">
+<section class="packages-section section-cream" id="packages">
+    <div class="decor-coffee"></div>
     <div class="section-header">
         <div class="accent">Our Packages</div>
         <h2>Choose Your Experience</h2>

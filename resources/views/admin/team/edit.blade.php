@@ -12,7 +12,7 @@
 
 <form method="POST" action="{{ route('admin.team.update', $member) }}">
     @csrf @method('PATCH')
-    <div class="card" style="max-width:640px;"><div class="card-body">
+    <div style="max-width:640px;background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);"><div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div class="form-group">
                 <label>Name</label>

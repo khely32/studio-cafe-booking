@@ -13,7 +13,7 @@
 <form method="POST" action="{{ route('admin.polls.update', $poll) }}">
     @csrf @method('PATCH')
     <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
-        <div class="card"><div class="card-body">
+        <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);"><div>
             <div class="form-group">
                 <label>Question</label>
                 <input type="text" name="question" class="form-control" value="{{ old('question', $poll->question) }}" required>
@@ -35,8 +35,8 @@
             <button type="button" onclick="addOption()" class="btn btn-sm btn-secondary" style="margin-bottom:24px;">+ Add Option</button>
             <button type="submit" class="btn btn-primary" style="width:100%;">Save Changes</button>
         </div></div>
-        <div class="card"><div class="card-body">
-            <h2 style="font-size:14px;font-weight:600;margin-bottom:16px;">Settings</h2>
+        <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);"><div>
+            <h2 style="font-size:14px;font-weight:600;margin-bottom:16px;font-family:Poppins,sans-serif;">Settings</h2>
             <div class="form-check" style="margin-bottom:16px;">
                 <input type="hidden" name="is_active" value="0">
                 <input type="checkbox" name="is_active" value="1" {{ old('is_active', $poll->is_active) ? 'checked' : '' }}>
@@ -47,9 +47,9 @@
                 <input type="checkbox" name="allow_multiple" value="1" {{ old('allow_multiple', $poll->allow_multiple) ? 'checked' : '' }}>
                 <label>Allow multiple selections</label>
             </div>
-            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--gray-100);">
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.05);">
                 <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">Total Votes</div>
-                <div style="font-size:24px;font-weight:700;">{{ $poll->total_votes }}</div>
+                <div style="font-size:24px;font-weight:700;font-family:Poppins,sans-serif;">{{ $poll->total_votes }}</div>
             </div>
         </div></div>
     </div>

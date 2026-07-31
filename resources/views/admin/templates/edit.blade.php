@@ -13,7 +13,7 @@
 <form method="POST" action="{{ route('admin.templates.update', $template) }}">
     @csrf @method('PATCH')
     <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
-        <div class="card"><div class="card-body">
+        <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);"><div>
             <div class="form-group">
                 <label>Title</label>
                 <input type="text" name="title" class="form-control" value="{{ old('title', $template->title) }}" required>
@@ -27,8 +27,8 @@
                 <textarea name="body" class="form-control" rows="18">{{ old('body', $template->body) }}</textarea>
             </div>
         </div></div>
-        <div class="card"><div class="card-body">
-            <h2 style="font-size:14px;font-weight:600;margin-bottom:16px;">Settings</h2>
+        <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);"><div>
+            <h2 style="font-size:14px;font-weight:600;margin-bottom:16px;font-family:Poppins,sans-serif;">Settings</h2>
             <div class="form-group">
                 <label>Type</label>
                 <select name="type" class="form-control">

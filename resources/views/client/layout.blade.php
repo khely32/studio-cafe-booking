@@ -5,24 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'My Dashboard') - 56'30 Studio Cafe</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
+            --primary: #1A120D;
+            --primary-light: #3A2E22;
+            --accent: #0F766E;
+            --accent-light: #D1FAE5;
+            --accent-dark: #115E59;
             --cafe: #8B6F47;
-            --cafe-dark: #6B4F35;
             --cafe-light: #C9A96E;
-            --amber: #D4A574;
-            --green: #10B981;
-            --green-bg: #D1FAE5;
-            --orange: #F97316;
-            --orange-bg: #FEF3C7;
-            --red: #EF4444;
-            --red-bg: #FEE2E2;
-            --gradient-1: linear-gradient(135deg, #8B6F47, #C9A96E);
-            --gradient-2: linear-gradient(135deg, #6B4F35, #8B6F47);
-            --bg: #FAF6F1;
-            --gray-50: #FAF6F1;
+            --coffee-brown: #6F4E37;
+            --espresso: #3E2723;
+            --warm-gold: #C8A96A;
+            --soft-gold: #D4AF37;
+            --cream: #FFF9F4;
+            --beige: #F7F2EB;
+            --wood: #B08968;
+            --white: #FFFFFF;
+            --bg: #FAF8F5;
+            --gray-50: #FAF8F5;
             --gray-100: #F0E8DD;
             --gray-200: #E0D4C4;
             --gray-300: #C4B8A8;
@@ -32,137 +35,225 @@
             --gray-700: #4A3C2E;
             --gray-800: #3A2E22;
             --gray-900: #1A120D;
-            --radius: 14px;
+            --success: #22C55E;
+            --success-bg: #D1FAE5;
+            --warning: #F59E0B;
+            --warning-bg: #FEF3C7;
+            --danger: #EF4444;
+            --danger-bg: #FEE2E2;
+            --radius: 16px;
             --radius-sm: 10px;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --radius-xs: 8px;
+            --radius-pill: 9999px;
+            --shadow-sm: 0 1px 3px rgba(44,30,20,0.08);
+            --shadow: 0 1px 3px rgba(44,30,20,0.08), 0 1px 2px rgba(44,30,20,0.04);
+            --shadow-md: 0 4px 16px rgba(44,30,20,0.1);
+            --shadow-lg: 0 8px 30px rgba(44,30,20,0.12);
+            --shadow-xl: 0 20px 60px rgba(44,30,20,0.15);
+            --transition: all 0.2s ease;
+            --gradient-warm: linear-gradient(135deg, #F8F6F2 0%, #F3ECE3 35%, #EFE7DC 70%, #FAF9F6 100%);
         }
-        body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--gray-800); line-height: 1.5; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            background: var(--gradient-warm);
+            color: var(--gray-800);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+
+        .bg-decor {
+            position: fixed; inset: 0; z-index: 0;
+            pointer-events: none; overflow: hidden;
+        }
+        .bg-decor .orb {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+        }
+        .bg-decor .orb-1 { width: 400px; height: 400px; top: -150px; right: -80px; background: radial-gradient(circle, rgba(201,169,110,0.12), transparent 70%); }
+        .bg-decor .orb-2 { width: 350px; height: 350px; bottom: -100px; left: -80px; background: radial-gradient(circle, rgba(139,111,71,0.1), transparent 70%); }
+        .bg-decor .grain {
+            position: fixed; inset: 0; opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='6' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 512px 512px;
+        }
 
         .topbar {
-            background: #fff; border-bottom: 1px solid var(--gray-200);
-            padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(224,212,196,0.5);
+            padding: 0 32px; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
             position: sticky; top: 0; z-index: 100;
         }
-        .topbar-brand { display: flex; align-items: center; gap: 10px; }
+        .topbar-brand { display: flex; align-items: center; gap: 12px; }
         .topbar-brand .logo {
-            width: 32px; height: 32px; border-radius: 10px;
-            background: var(--gradient-1); color: #fff;
+            width: 36px; height: 36px; border-radius: 12px;
+            background: linear-gradient(135deg, #8B6F47, #C9A96E); color: #fff;
             display: flex; align-items: center; justify-content: center;
         }
-        .topbar-brand .logo svg { width: 18px; height: 18px; }
-        .topbar-brand .text {
-            font-family: 'Playfair Display', serif; font-weight: 700;
-            font-size: 15px; color: var(--gray-900);
+        .topbar-brand .logo svg { width: 20px; height: 20px; }
+        .topbar-brand .brand-text { display: flex; flex-direction: column; }
+        .topbar-brand .brand-text .name {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700; font-size: 15px; color: var(--gray-900); line-height: 1.2;
         }
-        .topbar-brand .text span {
-            background: var(--gradient-1); -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; background-clip: text;
+        .topbar-brand .brand-text .name span {
+            background: linear-gradient(135deg, #8B6F47, #C9A96E);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .topbar-right { display: flex; align-items: center; gap: 20px; }
-        .topbar-right a { font-size: 13px; color: var(--gray-500); text-decoration: none; font-weight: 500; }
-        .topbar-right a:hover { color: var(--cafe); }
-        .topbar-right .user-name { font-weight: 600; color: var(--gray-700); }
+        .topbar-brand .brand-text .sub {
+            font-size: 9px; color: var(--gray-400);
+            letter-spacing: 1.5px; text-transform: uppercase; line-height: 1;
+        }
+        .topbar-right { display: flex; align-items: center; gap: 16px; }
+        .topbar-right .user-name { font-weight: 600; color: var(--gray-700); font-size: 14px; }
+        .topbar-right a {
+            font-size: 13px; font-weight: 500; color: var(--gray-500);
+            text-decoration: none; padding: 6px 14px; border-radius: var(--radius-pill);
+            transition: var(--transition);
+        }
+        .topbar-right a:hover { background: var(--gray-100); color: var(--gray-700); }
+        .topbar-right .logout-btn {
+            background: none; border: none; cursor: pointer;
+            font-size: 13px; font-weight: 500; color: var(--gray-400);
+            font-family: inherit; padding: 6px 14px; border-radius: var(--radius-pill);
+            transition: var(--transition);
+        }
+        .topbar-right .logout-btn:hover { background: var(--danger-bg); color: var(--danger); }
 
         .hnav {
-            background: #fff; border-bottom: 1px solid var(--gray-200);
-            padding: 0 32px; display: flex; gap: 2px; align-items: center;
-            position: sticky; top: 56px; z-index: 99;
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(224,212,196,0.5);
+            padding: 0 32px; display: flex; gap: 4px; align-items: center;
+            position: sticky; top: 64px; z-index: 99;
         }
         .hnav-link {
-            padding: 10px 18px; font-size: 13px; font-weight: 500;
-            color: var(--gray-500); text-decoration: none; border-bottom: 2px solid transparent;
-            transition: all 0.15s; margin-bottom: -1px;
+            padding: 14px 20px; font-size: 13px; font-weight: 500;
+            color: var(--gray-500); text-decoration: none;
+            border-bottom: 2px solid transparent; transition: var(--transition);
         }
-        .hnav-link:hover { color: var(--gray-700); }
-        .hnav-link.active { color: var(--cafe); border-bottom-color: var(--cafe); font-weight: 600; }
+        .hnav-link:hover { color: var(--gray-700); background: var(--gray-50); }
+        .hnav-link.active { color: var(--primary); border-bottom-color: var(--accent); font-weight: 600; }
 
-        .main-content { max-width: 1000px; margin: 0 auto; padding: 28px 32px; }
+        .main-wrap { position: relative; z-index: 1; }
+        .main-content { max-width: 1000px; margin: 0 auto; padding: 32px; }
 
         .card {
-            background: #fff; border: 1px solid var(--gray-200);
-            border-radius: var(--radius); box-shadow: var(--shadow-sm);
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
+            border: 1px solid rgba(224,212,196,0.4);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 35px rgba(0,0,0,.08);
+            transition: var(--transition);
         }
+        .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
         .card-header {
-            padding: 18px 22px; border-bottom: 1px solid var(--gray-100);
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(240,232,221,0.6);
             display: flex; justify-content: space-between; align-items: center;
         }
-        .card-header h2 { font-size: 15px; font-weight: 600; }
-        .card-body { padding: 22px; }
+        .card-header h2 { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+        .card-body { padding: 24px; }
 
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
-        .page-title { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .page-title { font-size: 20px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.3px; }
+        .page-subtitle { font-size: 14px; color: var(--gray-500); margin-top: 2px; }
 
         .btn {
-            display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
-            border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;
-            cursor: pointer; border: none; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
-            text-decoration: none; position: relative; overflow: hidden;
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; padding: 10px 20px; border-radius: var(--radius-pill);
+            font-size: 14px; font-weight: 500; cursor: pointer; border: none;
+            transition: var(--transition); font-family: 'Inter', sans-serif;
+            text-decoration: none; line-height: 1;
         }
-        .btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            transition: left 0.5s;
-        }
-        .btn:hover::before { left: 100%; }
-        .btn-gold { background: var(--gradient-1); color: #fff; box-shadow: 0 0 12px rgba(139,111,71,0.35); }
-        .btn-gold:hover { box-shadow: 0 0 20px rgba(139,111,71,0.5), 0 0 40px rgba(201,169,110,0.2); transform: translateY(-1px); }
-        .btn-secondary {
-            background: transparent; color: var(--cafe);
-            border: 1.5px solid var(--cafe-light);
-            box-shadow: 0 0 8px rgba(139,111,71,0.1);
-        }
-        .btn-secondary:hover { background: rgba(139,111,71,0.06); box-shadow: 0 0 16px rgba(139,111,71,0.25); }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
-        .stat-card {
-            background: #fff; border: 1px solid var(--gray-200);
-            border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow-sm);
-            position: relative; overflow: hidden;
-        }
-        .stat-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-        }
-        .stat-card:nth-child(1)::before { background: var(--gradient-1); }
-        .stat-card:nth-child(2)::before { background: var(--gradient-2); }
-        .stat-card:nth-child(3)::before { background: linear-gradient(135deg, #D4A574, #E8C9A0); }
-        .stat-label { font-size: 12px; color: var(--gray-500); margin-bottom: 4px; }
-        .stat-value { font-size: 26px; font-weight: 700; color: var(--gray-900); }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-light); box-shadow: 0 4px 12px rgba(26,18,13,0.2); }
+        .btn-accent { background: var(--accent); color: #fff; }
+        .btn-accent:hover { background: var(--accent-dark); box-shadow: 0 4px 12px rgba(15,118,110,0.3); }
+        .btn-secondary { background: var(--white); color: var(--gray-700); border: 1px solid var(--gray-300); }
+        .btn-secondary:hover { background: var(--gray-50); border-color: var(--gray-400); }
+        .btn-ghost { background: transparent; color: var(--gray-500); }
+        .btn-ghost:hover { background: var(--gray-100); color: var(--gray-700); }
+        .btn-sm { padding: 7px 14px; font-size: 12px; }
 
         .table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .table th {
-            padding: 9px 14px; text-align: left; font-size: 11px; font-weight: 600;
-            color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--gray-200); background: var(--gray-50);
+        .table thead {
+            background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
         }
-        .table td { padding: 11px 14px; border-bottom: 1px solid var(--gray-100); }
-        .table tr:hover { background: var(--gray-50); }
+        .table th {
+            padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600;
+            color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .table td { padding: 14px 16px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+        .table tbody tr:hover { background: rgba(240,232,221,0.4); }
 
         .badge {
-            display: inline-flex; padding: 3px 10px; border-radius: 100px;
-            font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: var(--radius-pill);
+            font-size: 11px; font-weight: 600; letter-spacing: 0.2px;
         }
-        .badge-pending { background: var(--orange-bg); color: #92400E; }
-        .badge-confirmed { background: var(--green-bg); color: #065F46; }
-        .badge-cancelled { background: var(--red-bg); color: #991B1B; }
-        .badge-completed { background: var(--gray-100); color: var(--gray-600); }
+        .badge-success { background: var(--success-bg); color: #065F46; }
+        .badge-warning { background: var(--warning-bg); color: #92400E; }
+        .badge-danger { background: var(--danger-bg); color: #991B1B; }
+        .badge-neutral { background: var(--gray-100); color: var(--gray-600); }
 
-        .alert { padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-        .alert-success { background: var(--green-bg); color: #065F46; border: 1px solid #A7F3D0; }
-        .alert-error { background: var(--red-bg); color: #991B1B; border: 1px solid #FECACA; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+        .stat-card {
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(20px);
+            border: 1px solid rgba(224,212,196,0.35);
+            border-radius: var(--radius); padding: 20px;
+            transition: var(--transition);
+            box-shadow: 0 10px 35px rgba(0,0,0,.06);
+        }
+        .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .stat-label { font-size: 13px; color: var(--gray-500); margin-bottom: 4px; font-weight: 500; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.5px; }
+
+        .alert {
+            padding: 12px 18px; border-radius: var(--radius-sm);
+            margin-bottom: 20px; font-size: 14px;
+            display: flex; align-items: center; gap: 10px; font-weight: 500;
+        }
+        .alert-success { background: var(--success-bg); color: #065F46; border: 1px solid #A7F3D0; }
+        .alert-error { background: var(--danger-bg); color: #991B1B; border: 1px solid #FECACA; }
 
         .empty-state { padding: 50px 20px; text-align: center; }
         .empty-state .icon { font-size: 40px; margin-bottom: 10px; opacity: 0.3; }
         .empty-state p { color: var(--gray-400); font-size: 13px; }
 
+        .chuquel-badge {
+            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
+            border: 1px solid rgba(224,212,196,0.4); border-radius: 16px; padding: 12px 16px;
+            box-shadow: 0 4px 24px rgba(44,30,20,0.12);
+            text-align: center; min-width: 120px;
+            animation: fadeIn 0.5s ease;
+        }
+        .chuquel-badge svg { width: 32px; height: 32px; margin: 0 auto 4px; display: block; stroke: var(--cafe); }
+        .chuquel-badge .name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 13px; color: var(--cafe); letter-spacing: 0.5px; }
+        .chuquel-badge .tag { font-size: 8px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         @media (max-width: 768px) {
+            .topbar { padding: 0 16px; }
+            .main-content { padding: 20px 16px; }
             .stats-grid { grid-template-columns: 1fr; }
-            .hnav { overflow-x: auto; padding: 0 16px; }
+            .hnav { overflow-x: auto; }
         }
     </style>
     @yield('styles')
 </head>
 <body>
+    <div class="bg-decor">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="grain"></div>
+    </div>
+
     <nav class="topbar">
         <div class="topbar-brand">
             <div class="logo">
@@ -173,14 +264,17 @@
                     <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
                 </svg>
             </div>
-            <div class="text">chuquel</div>
+            <div class="brand-text">
+                <div class="name">56'30 <span>Studio</span></div>
+                <div class="sub">by chuquel</div>
+            </div>
         </div>
         <div class="topbar-right">
             <span class="user-name">{{ Auth::user()->name }}</span>
             <a href="{{ route('home') }}">Book Session</a>
             <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                 @csrf
-                <button type="submit" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--gray-500);font-family:inherit;padding:0;">Logout</button>
+                <button type="submit" class="logout-btn">Logout</button>
             </form>
         </div>
     </nav>
@@ -189,18 +283,20 @@
         <a href="{{ route('client.dashboard') }}" class="hnav-link {{ request()->routeIs('client.dashboard') ? 'active' : '' }}">My Bookings</a>
     </nav>
 
-    <div class="main-content">
-        @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        @if(session('error'))
-        <div class="alert alert-error">{{ session('error') }}</div>
-        @endif
-        @yield('content')
+    <div class="main-wrap">
+        <div class="main-content">
+            @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            @if(session('error'))
+            <div class="alert alert-error">{{ session('error') }}</div>
+            @endif
+            @yield('content')
+        </div>
     </div>
 
     <div class="chuquel-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--cafe)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
             <circle cx="12" cy="12" r="4"/>
             <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
@@ -209,22 +305,5 @@
         <div class="name">chuquel</div>
         <div class="tag">studio brand</div>
     </div>
-
-    <style>
-    .chuquel-badge {
-        position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-        background: #fff; border: 1px solid var(--gray-200);
-        border-radius: 16px; padding: 14px 18px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-        text-align: center; min-width: 140px;
-        animation: fadeIn 0.5s ease;
-    }
-    .chuquel-badge svg { width: 40px; height: 40px; margin: 0 auto 6px; display: block; }
-    .chuquel-badge .name { font-weight: 700; font-size: 15px; color: var(--cafe); font-family: 'Georgia', serif; letter-spacing: 1px; }
-    .chuquel-badge .tag { font-size: 9px; color: var(--gray-400); margin-top: 1px; text-transform: uppercase; letter-spacing: 1px; }
-    @media (max-width: 768px) {
-        .chuquel-badge { display: none; }
-    }
-    </style>
 </body>
 </html>

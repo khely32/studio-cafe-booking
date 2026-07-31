@@ -2,6 +2,11 @@
 @section('title', 'Poll Results')
 
 @section('content')
+<style>
+    .poll-bar { height: 10px; background: rgba(0,0,0,0.04); border-radius: 100px; overflow: hidden; }
+    .poll-bar-fill { height: 100%; border-radius: 100px; background: var(--gradient-1); transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+</style>
+
 <div class="page-header">
     <div>
         <div class="page-title">Poll Results</div>
@@ -11,40 +16,42 @@
 </div>
 
 <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
-    <div class="card">
-        <div class="card-header">
-            <h2>{{ $poll->question }}</h2>
+    <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 40px rgba(139,111,71,0.08);">
+        <div style="padding:20px 24px;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:space-between;">
+            <h2 style="font-size:16px;font-weight:700;font-family:Poppins,sans-serif;color:var(--gray-900);">{{ $poll->question }}</h2>
             <span style="font-size:13px;color:var(--gray-500);">{{ $poll->total_votes }} total votes</span>
         </div>
-        <div class="card-body">
+        <div style="padding:24px;">
             @foreach($poll->options as $opt)
             @php $pct = $poll->total_votes > 0 ? round(($opt->vote_count / $poll->total_votes) * 100, 1) : 0; @endphp
             <div style="margin-bottom:20px;">
-                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-                    <span style="font-weight:500;font-size:14px;">{{ $opt->text }}</span>
-                    <span style="font-size:13px;color:var(--gray-500);">{{ $opt->vote_count }} votes ({{ $pct }}%)</span>
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <span style="font-weight:600;font-size:14px;color:var(--gray-800);">{{ $opt->text }}</span>
+                    <span style="font-size:13px;color:var(--gray-500);font-weight:500;">{{ $opt->vote_count }} vote{{ $opt->vote_count !== 1 ? 's' : '' }} ({{ $pct }}%)</span>
                 </div>
-                <div style="height:8px;background:var(--gray-100);border-radius:100px;overflow:hidden;">
-                    <div style="height:100%;width:{{ $pct }}%;background:var(--primary);border-radius:100px;transition:width 0.5s;"></div>
+                <div class="poll-bar">
+                    <div class="poll-bar-fill" style="width:{{ $pct }}%;"></div>
                 </div>
             </div>
             @endforeach
         </div>
     </div>
-    <div class="card">
-        <div class="card-header"><h2>Info</h2></div>
-        <div class="card-body">
-            <div style="margin-bottom:12px;">
-                <div style="font-size:12px;color:var(--gray-500);margin-bottom:2px;">Created</div>
-                <div style="font-weight:500;">{{ $poll->created_at->format('M d, Y') }}</div>
+    <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 40px rgba(139,111,71,0.08);align-self:start;">
+        <div style="padding:20px 24px;border-bottom:1px solid rgba(0,0,0,0.04);">
+            <h2 style="font-size:14px;font-weight:700;font-family:Poppins,sans-serif;color:var(--gray-900);">Info</h2>
+        </div>
+        <div style="padding:24px;">
+            <div style="margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray-400);margin-bottom:4px;">Created</div>
+                <div style="font-weight:500;font-size:14px;color:var(--gray-800);">{{ $poll->created_at->format('M d, Y') }}</div>
             </div>
-            <div style="margin-bottom:12px;">
-                <div style="font-size:12px;color:var(--gray-500);margin-bottom:2px;">Status</div>
-                <span class="page-card-badge {{ $poll->is_closed ? 'badge-cancelled' : ($poll->is_active ? 'badge-online' : 'badge-offline') }}">{{ $poll->is_closed ? 'Closed' : 'Open' }}</span>
+            <div style="margin-bottom:16px;">
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray-400);margin-bottom:4px;">Status</div>
+                <span class="badge {{ $poll->is_closed ? 'badge-neutral' : ($poll->is_active ? 'badge-success' : 'badge-neutral') }}">{{ $poll->is_closed ? 'Closed' : 'Open' }}</span>
             </div>
-            <div style="margin-bottom:20px;">
-                <div style="font-size:12px;color:var(--gray-500);margin-bottom:2px;">Mode</div>
-                <div style="font-weight:500;font-size:13px;">{{ $poll->allow_multiple ? 'Multiple selections' : 'Single selection' }}</div>
+            <div style="margin-bottom:24px;">
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray-400);margin-bottom:4px;">Mode</div>
+                <div style="font-weight:500;font-size:14px;color:var(--gray-800);">{{ $poll->allow_multiple ? 'Multiple selections' : 'Single selection' }}</div>
             </div>
             @if(!$poll->is_closed)
             <form method="POST" action="{{ route('admin.polls.toggle-close', $poll) }}">

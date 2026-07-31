@@ -13,7 +13,7 @@
 <form method="POST" action="{{ route('admin.polls.store') }}">
     @csrf
     <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
-        <div class="card"><div class="card-body">
+        <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);"><div>
             <div class="form-group">
                 <label>Question</label>
                 <input type="text" name="question" class="form-control" value="{{ old('question') }}" required placeholder="e.g. Which theme should we offer next?">
@@ -34,8 +34,8 @@
             <button type="button" onclick="addOption()" class="btn btn-sm btn-secondary" style="margin-bottom:24px;">+ Add Option</button>
             <button type="submit" class="btn btn-primary" style="width:100%;">Create Poll</button>
         </div></div>
-        <div class="card"><div class="card-body">
-            <h2 style="font-size:14px;font-weight:600;margin-bottom:16px;">Settings</h2>
+        <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);"><div>
+            <h2 style="font-size:14px;font-weight:600;margin-bottom:16px;font-family:Poppins,sans-serif;">Settings</h2>
             <div class="form-check" style="margin-bottom:16px;">
                 <input type="hidden" name="is_active" value="0">
                 <input type="checkbox" name="is_active" value="1" {{ old('is_active', 1) ? 'checked' : '' }}>
