@@ -77,8 +77,10 @@ register_shutdown_function(function () {
 try {
     require __DIR__ . '/../public/index.php';
 } catch (\Throwable $e) {
-    http_response_code(500);
-    header('Content-Type: text/plain');
+    if (! headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/plain');
+    }
     echo 'PROPAGATED: '.get_class($e).': '.$e->getMessage()."\n";
     echo $e->getFile().':'.$e->getLine()."\n";
     echo substr($e->getTraceAsString(), 0, 4000);
