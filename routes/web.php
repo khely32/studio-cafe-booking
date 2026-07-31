@@ -11,6 +11,33 @@ use App\Http\Controllers\Admin\PollController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\ClientDashboardController;
 
+Route::get('/diag', function () {
+    $out = [];
+    $default = config('database.default');
+    $out['default'] = $default;
+    $out['ext_pgsql'] = extension_loaded('pdo_pgsql');
+    $out['ext_mysql'] = extension_loaded('pdo_mysql');
+    $out['ext_sqlite'] = extension_loaded('pdo_sqlite');
+    $out['host'] = config('database.connections.'.$default.'.host');
+    $out['port'] = config('database.connections.'.$default.'.port');
+    $out['database'] = config('database.connections.'.$default.'.database');
+    $out['user'] = config('database.connections.'.$default.'.username');
+    $out['sslmode'] = config('database.connections.'.$default.'.sslmode');
+    $out['env_PGHOST'] = getenv('PGHOST') ?: 'NOT SET';
+    $out['env_PGDATABASE'] = getenv('PGDATABASE') ?: 'NOT SET';
+    $out['env_PGUSER'] = getenv('PGUSER') ?: 'NOT SET';
+    $out['env_DATABASE_URL'] = getenv('DATABASE_URL') ? 'SET' : 'NOT SET';
+    $out['env_DB_CONNECTION'] = getenv('DB_CONNECTION') ?: 'NOT SET';
+    try {
+        $pdo = \Illuminate\Support\Facades\DB::connection()->getPdo();
+        $out['pdo'] = 'CONNECTED';
+    } catch (\Throwable $e) {
+        $out['pdo_error'] = get_class($e).': '.$e->getMessage();
+    }
+    $out['migrations_table'] = \Illuminate\Support\Facades\Schema::hasTable('migrations');
+    return response()->json($out);
+});
+
 Route::get('/', function () {
     $services = \App\Models\Service::active()->get();
     return view('home', compact('services'));
