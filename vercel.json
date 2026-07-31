@@ -12,6 +12,11 @@
             "use": "@vercel/static"
         }
     ],
+    "functions": {
+        "api/index.php": {
+            "maxDuration": 60
+        }
+    },
     "routes": [
         {
             "src": "/favicon.(.*)",
