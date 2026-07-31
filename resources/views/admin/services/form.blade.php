@@ -26,11 +26,16 @@
             </div>
 
             <div class="form-group">
-                <label>Image URL</label>
-                <input type="url" name="image" value="{{ old('image', $service->image ?? '') }}" class="form-control" placeholder="https://images.unsplash.com/photo-...">
-                @if(isset($service) && $service->image)
-                <div style="margin-top:8px;"><img src="{{ $service->image }}" alt="" style="width:100px;height:70px;object-fit:cover;border-radius:8px;border:1px solid var(--gray-200);"></div>
-                @endif
+                <label>Package Photo</label>
+                <input type="file" id="image-input" accept="image/*" class="form-control" style="padding:9px 12px;">
+                <input type="hidden" name="image" id="image-data" value="{{ old('image', $service->image ?? '') }}">
+                <div style="display:flex;align-items:center;gap:16px;margin-top:10px;">
+                    <img id="image-preview" src="{{ isset($service) && $service->image ? $service->image : '' }}" alt="Preview" style="width:140px;height:96px;object-fit:cover;border-radius:10px;border:1px solid rgba(0,0,0,0.1);{{ isset($service) && $service->image ? '' : 'display:none;' }}">
+                    <div style="font-size:12px;color:var(--gray-500);line-height:1.6;">
+                        Choose a photo of the package. It is resized automatically.<br>
+                        <button type="button" id="image-clear" class="btn btn-secondary btn-sm" style="{{ isset($service) && $service->image ? '' : 'display:none;' }} margin-top:8px;">Remove photo</button>
+                    </div>
+                </div>
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
@@ -69,4 +74,53 @@
         </form>
     </div>
 </div>
+
+<script>
+(function () {
+    const fileInput = document.getElementById('image-input');
+    const dataField = document.getElementById('image-data');
+    const preview = document.getElementById('image-preview');
+    const clearBtn = document.getElementById('image-clear');
+
+    async function loadImage(file) {
+        if ('createImageBitmap' in window) {
+            try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e) {}
+        }
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = url; });
+        URL.revokeObjectURL(url);
+        return img;
+    }
+
+    fileInput.addEventListener('change', async function () {
+        const file = this.files[0];
+        if (!file) return;
+        try {
+            const img = await loadImage(file);
+            const MAX = 900;
+            let w = img.width, h = img.height;
+            if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            dataField.value = dataUrl;
+            preview.src = dataUrl;
+            preview.style.display = 'block';
+            clearBtn.style.display = 'inline-block';
+        } catch (e) {
+            alert('Could not read that image. Please try another file.');
+            fileInput.value = '';
+        }
+    });
+
+    clearBtn.addEventListener('click', function () {
+        dataField.value = '';
+        preview.style.display = 'none';
+        clearBtn.style.display = 'none';
+        fileInput.value = '';
+    });
+})();
+</script>
 @endsection
