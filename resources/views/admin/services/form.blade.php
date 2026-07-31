@@ -30,9 +30,13 @@
                 <input type="file" id="image-input" accept="image/*" class="form-control" style="padding:9px 12px;">
                 <input type="hidden" name="image" id="image-data" value="{{ old('image', $service->image ?? '') }}">
                 <div style="display:flex;align-items:center;gap:16px;margin-top:10px;">
-                    <img id="image-preview" src="{{ isset($service) && $service->image ? $service->image : '' }}" alt="Preview" style="width:140px;height:96px;object-fit:cover;border-radius:10px;border:1px solid rgba(0,0,0,0.1);{{ isset($service) && $service->image ? '' : 'display:none;' }}">
+                    <div style="text-align:center;">
+                        <img id="image-preview" src="{{ isset($service) && $service->image ? $service->image : '' }}" alt="Preview" style="width:110px;height:147px;object-fit:cover;border-radius:10px;border:1px solid rgba(0,0,0,0.1);{{ isset($service) && $service->image ? '' : 'display:none;' }}">
+                        <button type="button" id="crop-current" class="btn btn-secondary btn-sm" style="{{ isset($service) && $service->image ? '' : 'display:none;' }} margin-top:6px;">Crop current photo</button>
+                    </div>
                     <div style="font-size:12px;color:var(--gray-500);line-height:1.6;">
-                        Choose a photo of the package. It is resized automatically.<br>
+                        Choose a photo of the package. After selecting, you can crop it.<br>
+                        Photos are always saved in <strong>portrait</strong> (3:4) format.<br>
                         <button type="button" id="image-clear" class="btn btn-secondary btn-sm" style="{{ isset($service) && $service->image ? '' : 'display:none;' }} margin-top:8px;">Remove photo</button>
                     </div>
                 </div>
@@ -75,50 +79,116 @@
     </div>
 </div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+<div id="crop-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;padding:20px;max-width:92vw;max-height:88vh;width:680px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="font-weight:600;margin-bottom:12px;color:#111;">Crop your photo</div>
+        <div style="flex:1;min-height:0;overflow:auto;background:#111;border-radius:10px;">
+            <img id="crop-image" alt="Crop" style="display:block;max-width:100%;">
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;">
+            <button type="button" id="crop-cancel" class="btn btn-secondary">Cancel</button>
+            <button type="button" id="crop-apply" class="btn btn-primary">Apply Crop</button>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
     const fileInput = document.getElementById('image-input');
     const dataField = document.getElementById('image-data');
     const preview = document.getElementById('image-preview');
     const clearBtn = document.getElementById('image-clear');
+    const cropBtn = document.getElementById('crop-current');
+    const modal = document.getElementById('crop-modal');
+    const cropImg = document.getElementById('crop-image');
+    let cropper = null;
+    let currentUrl = null;
 
-    async function loadImage(file) {
-        if ('createImageBitmap' in window) {
-            try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e) {}
-        }
-        const url = URL.createObjectURL(file);
-        const img = new Image();
-        await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; img.src = url; });
-        URL.revokeObjectURL(url);
-        return img;
+    function setCropped(canvas) {
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        dataField.value = dataUrl;
+        preview.src = dataUrl;
+        preview.style.display = 'block';
+        clearBtn.style.display = 'inline-block';
+        cropBtn.style.display = 'inline-block';
     }
 
-    fileInput.addEventListener('change', async function () {
+    function closeCrop() {
+        if (cropper) { cropper.destroy(); cropper = null; }
+        if (currentUrl) { URL.revokeObjectURL(currentUrl); currentUrl = null; }
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        fileInput.value = '';
+    }
+
+    function openCrop(src, isBlobUrl) {
+        if (typeof Cropper === 'undefined') {
+            if (isBlobUrl) {
+                const img = new Image();
+                img.onload = function () {
+                    const MAX = 900;
+                    const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+                    const sw = Math.round(img.width * scale);
+                    const sh = Math.round(img.height * scale);
+                    let cw, ch;
+                    if (sw / sh > 3 / 4) { cw = Math.round(sh * 3 / 4); ch = sh; } else { cw = sw; ch = Math.round(sw * 4 / 3); }
+                    const sx = Math.round((sw - cw) / 2), sy = Math.round((sh - ch) / 2);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = cw; canvas.height = ch;
+                    canvas.getContext('2d').drawImage(img, sx / scale, sy / scale, cw / scale, ch / scale, 0, 0, cw, ch);
+                    setCropped(canvas);
+                    URL.revokeObjectURL(src);
+                };
+                img.onerror = function () { URL.revokeObjectURL(src); alert('Could not read that image. Please try another file.'); };
+                img.src = src;
+            }
+            return;
+        }
+        cropImg.onload = function () {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            cropper = new Cropper(cropImg, { viewMode: 1, aspectRatio: 3 / 4, autoCropArea: 0.9, background: false, checkOrientation: true });
+        };
+        cropImg.onerror = function () {
+            if (currentUrl) { URL.revokeObjectURL(currentUrl); currentUrl = null; }
+            alert('Could not read that image. Please try another file.');
+        };
+        cropImg.src = src;
+    }
+
+    fileInput.addEventListener('change', function () {
         const file = this.files[0];
         if (!file) return;
-        try {
-            const img = await loadImage(file);
-            const MAX = 900;
-            let w = img.width, h = img.height;
-            if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-            const canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-            dataField.value = dataUrl;
-            preview.src = dataUrl;
-            preview.style.display = 'block';
-            clearBtn.style.display = 'inline-block';
-        } catch (e) {
-            alert('Could not read that image. Please try another file.');
-            fileInput.value = '';
-        }
+        const url = URL.createObjectURL(file);
+        currentUrl = url;
+        openCrop(url, true);
     });
+
+    cropBtn.addEventListener('click', function () {
+        const src = dataField.value;
+        if (!src) return;
+        currentUrl = null;
+        openCrop(src, false);
+    });
+
+    document.getElementById('crop-apply').addEventListener('click', function () {
+        if (!cropper) return;
+        const canvas = cropper.getCroppedCanvas({ maxWidth: 900, maxHeight: 900 });
+        setCropped(canvas);
+        closeCrop();
+    });
+
+    document.getElementById('crop-cancel').addEventListener('click', closeCrop);
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeCrop(); });
 
     clearBtn.addEventListener('click', function () {
         dataField.value = '';
         preview.style.display = 'none';
         clearBtn.style.display = 'none';
+        cropBtn.style.display = 'none';
         fileInput.value = '';
     });
 })();
