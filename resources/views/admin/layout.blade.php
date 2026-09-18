@@ -609,6 +609,7 @@
                     ['route' => 'admin.addons.index', 'label' => 'Add-Ons', 'data-page' => 'Add-Ons'],
                     ['route' => 'admin.team.index', 'label' => 'Team', 'data-page' => 'Team'],
                     ['route' => 'admin.templates.index', 'label' => 'Templates', 'data-page' => 'Templates'],
+                    ['route' => 'admin.expenses.index', 'label' => 'Expenses', 'data-page' => 'Expenses'],
                     ['route' => 'admin.analytics', 'label' => 'Analytics', 'data-page' => 'Analytics'],
                     ['route' => 'admin.polls.index', 'label' => 'Polls', 'data-page' => 'Polls'],
                     ['route' => 'admin.settings.reminders', 'label' => 'Reminders', 'data-page' => 'Reminders'],

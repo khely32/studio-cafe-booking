@@ -218,6 +218,57 @@
 .an-dow .an-bar.hot { background: linear-gradient(180deg, #D4AF37, #A37B2C); }
 .an-dow .bar-day { font-size: 10px; color: #7A6E65; }
 
+/* ── Top selling products (horizontal bars) ── */
+.an-tp { display: flex; flex-direction: column; gap: 14px; }
+.an-tp-row { display: flex; align-items: center; gap: 14px; }
+.an-tp-main { flex: 1; min-width: 0; }
+.an-tp-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.an-tp-name {
+    font-size: 13px; font-weight: 700; color: #2C221E;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.an-tp-tag {
+    font-size: 9px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 9999px; flex-shrink: 0;
+    background: rgba(194,155,56,0.14); color: #A37B2C; border: 1px solid rgba(194,155,56,0.30);
+}
+.an-tp-tag.addon { background: #F0EAE1; color: #5C4A3A; border-color: #E3DAC9; }
+.an-tp-track {
+    height: 12px; border-radius: 9999px;
+    background: linear-gradient(180deg, #F0E8DD, #EADFCB);
+    border: 1px solid rgba(44,34,30,0.06);
+    overflow: hidden;
+}
+.an-tp-bar {
+    height: 100%; border-radius: 9999px;
+    background: linear-gradient(90deg, #8A6520, #C29B38);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+    position: relative; overflow: hidden;
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    animation: tpGrow 0.7s cubic-bezier(0.4,0,0.2,1) both;
+}
+.an-tp-bar.gold { background: linear-gradient(90deg, #A37B2C, #D4AF37); }
+.an-tp-bar::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform: translateX(-100%);
+    animation: tpShine 3s ease-in-out 1s infinite;
+}
+@keyframes tpGrow { from { width: 0; } }
+@keyframes tpShine { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+.an-tp-nums { display: flex; align-items: center; gap: 10px; flex-shrink: 0; min-width: 150px; justify-content: flex-end; }
+.an-tp-units { font-size: 16px; font-weight: 800; color: #2C221E; white-space: nowrap; }
+.an-tp-rev {
+    font-size: 11px; font-weight: 700; color: #8A6520;
+    background: rgba(194,155,56,0.12); border: 1px solid rgba(194,155,56,0.22);
+    padding: 3px 10px; border-radius: 9999px; white-space: nowrap;
+}
+.an-tp-medal { flex-shrink: 0; }
+.an-tp-medal svg { width: 18px; height: 18px; }
+.an-tp-medal.rank-0 { color: #D4AF37; }
+.an-tp-medal.rank-1 { color: #9C8E7C; }
+.an-tp-medal.rank-2 { color: #C29B38; }
+
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 .anim { animation: fadeUp 0.45s cubic-bezier(0.4,0,0.2,1) both; }
 .anim-d1 { animation-delay: 0.05s; }
@@ -237,6 +288,9 @@
     .an-header { flex-direction: column; align-items: flex-start; }
     .an-hero-stats { width: 100%; }
     .an-hero-stat { min-width: calc(50% - 6px); flex: 1; }
+    .an-tp-nums { min-width: 0; }
+    .an-tp-row { flex-wrap: wrap; gap: 8px; }
+    .an-tp-nums { width: 100%; justify-content: flex-start; }
 }
 </style>
 @endsection
@@ -269,7 +323,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/></svg>
             </div>
             <div>
-                <h2>You're on a roll, {{ $user->name }}!</h2>
+                <h2>You're on a roll{{ auth()->user()?->name ? ', ' . auth()->user()->name : '' }}!</h2>
                 <p>You saved <b>1 hour</b> and avoided <b>15 redundant emails</b> yesterday.</p>
             </div>
         </div>
@@ -283,7 +337,15 @@
             </div>
             <div class="an-hero-stat">
                 <div class="hs-label">Revenue Run-Rate</div>
-                <div class="hs-value">${{ number_format($overview['total_revenue'] ?? 0, 0) }} collected</div>
+                <div class="hs-value">₱{{ number_format($overview['total_revenue'] ?? 0, 0) }} collected</div>
+            </div>
+            <div class="an-hero-stat">
+                <div class="hs-label">Expenses</div>
+                <div class="hs-value">₱{{ number_format($totalExpenses ?? 0, 0) }} spent</div>
+            </div>
+            <div class="an-hero-stat">
+                <div class="hs-label">Net Profit</div>
+                <div class="hs-value em">₱{{ number_format($netProfit ?? 0, 0) }}</div>
             </div>
             <div class="an-hero-stat">
                 <div class="hs-label">Response Efficiency</div>
@@ -383,7 +445,7 @@
     </div>
 
     {{-- Row 2: lower KPI cards --}}
-    <div class="an-grid-2 anim anim-d4">
+    <div class="an-grid anim anim-d4">
 
         {{-- SMS sent --}}
         <div class="an-card">
@@ -413,10 +475,27 @@
                 <span class="an-label an-label-light">Total Amount Received</span>
             </div>
             <div class="an-amt">
-                <div class="an-amt-value">${{ number_format($overview['total_revenue'] ?? 0, 0) }}</div>
+                <div class="an-amt-value">₱{{ number_format($overview['total_revenue'] ?? 0, 0) }}</div>
                 <span class="an-amt-change">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="23" y1="6" x2="13" y2="16"/><polyline points="17 6 23 6 23 12"/><line x1="13" y1="6" x2="4" y2="6" transform="rotate(180 13 6)"/><path d="M3 5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h1"/></svg>
-                    +12.5% vs previous period
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    Net profit: ₱{{ number_format($netProfit ?? 0, 0) }}
+                </span>
+            </div>
+        </div>
+
+        {{-- Net profit this month (featured) --}}
+        <div class="an-card" style="background:linear-gradient(135deg,#A37B2C 0%,#C29B38 100%);border-color:rgba(44,34,30,0.35);">
+            <div class="an-amt-icon" style="background:rgba(44,34,30,0.20);color:#2C221E;border-color:rgba(44,34,30,0.35);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <div class="an-card-hd" style="margin-bottom:8px;">
+                <span class="an-label an-label-light" style="color:#2C221E;">Net Profit This Month</span>
+            </div>
+            <div class="an-amt">
+                <div class="an-amt-value" style="color:#2C221E;">₱{{ number_format($monthNetProfit ?? 0, 0) }}</div>
+                <span class="an-amt-change" style="background:rgba(44,34,30,0.14);color:#2C221E;border-color:rgba(44,34,30,0.30);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Revenue ₱{{ number_format($overview['month_revenue'] ?? 0, 0) }} · Expenses ₱{{ number_format($monthExpenses ?? 0, 0) }}
                 </span>
             </div>
         </div>
@@ -466,6 +545,57 @@
             </div>
         </div>
 
+    </div>
+
+    {{-- Row 4: Top selling products --}}
+    <div class="an-card anim" style="animation-delay:0.30s;">
+        <div class="an-card-hd" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:34px;height:34px;border-radius:10px;background:rgba(194,155,56,0.14);color:#A37B2C;display:flex;align-items:center;justify-content:center;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+                <span class="an-label" style="font-size:11px;">Top Selling Products</span>
+            </div>
+            <span class="an-pill">By units sold · All time</span>
+        </div>
+
+        @php
+            $maxUnits = ($topProducts ?? collect())->pluck('units')->max() ?: 1;
+        @endphp
+
+        <div class="an-tp">
+            @forelse(($topProducts ?? []) as $i => $product)
+            <div class="an-tp-row">
+                <div class="an-tp-medal {{ $i < 3 ? 'rank-' . $i : '' }}">
+                    @if($i < 3)
+                    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 7.7l5.4-.8L12 2z"/></svg>
+                    @else
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#C4B8A8;"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+                    @endif
+                </div>
+                <div class="an-tp-main">
+                    <div class="an-tp-top">
+                        <span class="an-tp-name">{{ $product['name'] }}</span>
+                        <span class="an-tp-tag {{ $product['type'] === 'Add-On' ? 'addon' : '' }}">{{ $product['type'] }}</span>
+                    </div>
+                    <div class="an-tp-track">
+                        <div class="an-tp-bar {{ $i === 0 ? 'gold' : '' }}" style="width: {{ max(2, ($product['units'] / $maxUnits) * 100) }}%;"></div>
+                    </div>
+                </div>
+                <div class="an-tp-nums">
+                    <span class="an-tp-units">{{ $product['units'] }} <span style="font-size:11px;font-weight:600;color:#7A6E65;">sold</span></span>
+                    <span class="an-tp-rev">₱{{ number_format($product['revenue'], 0) }}</span>
+                </div>
+            </div>
+            @empty
+            <div class="an-pp-item">
+                <div class="an-pp-info">
+                    <div class="pp-name" style="font-size:13px;font-weight:700;color:#2C221E;">No confirmed sales yet</div>
+                    <div class="pp-handle" style="font-size:11px;color:#7A6E65;">Sales charts will appear once bookings are confirmed or completed.</div>
+                </div>
+            </div>
+            @endforelse
+        </div>
     </div>
 
 </div>

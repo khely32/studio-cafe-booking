@@ -74,6 +74,25 @@
         background: rgba(255,248,225,0.9); border: 1px solid rgba(255,236,179,0.5);
         border-radius: var(--radius-sm); font-size: 13px; color: #92400E;
     }
+    .email-notice {
+        display: flex; align-items: center; gap: 14px;
+        padding: 16px 20px; margin-bottom: 24px;
+        background: linear-gradient(135deg, rgba(255,253,249,0.95), rgba(247,242,235,0.95));
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(201,169,110,0.28);
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(44,30,20,0.06);
+    }
+    .email-notice .en-icon {
+        width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+        background: linear-gradient(135deg, #D4AF37, #A37B2C);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; box-shadow: 0 4px 12px rgba(163,123,44,0.3);
+    }
+    .email-notice .en-icon svg { width: 20px; height: 20px; }
+    .email-notice h4 { font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 600; color: #2C221E; margin-bottom: 2px; }
+    .email-notice p { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+    .email-notice p strong { color: #8B6F47; }
 </style>
 @endsection
 
@@ -89,6 +108,16 @@
 
 <div class="container">
     <div style="max-width:640px;margin:0 auto;">
+
+        <div class="email-notice">
+            <div class="en-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><polyline points="2 7 12 13 22 7"/></svg>
+            </div>
+            <div>
+                <h4>Check your email for confirmation</h4>
+                <p>You will receive a notification on <strong>Gmail / {{ $booking->customer_email }}</strong> with your booking details and reference number. Please check your inbox (and spam folder) shortly.</p>
+            </div>
+        </div>
 
         <div class="detail-card">
             <h3>Booking Details</h3>

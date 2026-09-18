@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\Expense;
 use App\Models\Service;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AnalyticsController extends Controller
 {
@@ -31,6 +33,65 @@ class AnalyticsController extends Controller
             ->groupBy('status')
             ->pluck('count', 'status')
             ->toArray();
+
+        // Expenses
+        $totalExpenses = Expense::sum('amount');
+        $monthExpenses = Expense::where('expense_date', '>=', $startOfMonth)->sum('amount');
+        $yearExpenses = Expense::where('expense_date', '>=', $startOfYear)->sum('amount');
+
+        $netProfit = max(0, $overview['total_revenue'] - $totalExpenses);
+        $monthNetProfit = max(0, $overview['month_revenue'] - $monthExpenses);
+        $yearNetProfit = max(0, $overview['year_revenue'] - $yearExpenses);
+
+        // Monthly expenses (last 12 months)
+        for ($i = 11; $i >= 0; $i--) {
+            $month = Carbon::now()->subMonths($i);
+            $monthStart = $month->copy()->startOfMonth();
+            $monthEnd = $month->copy()->endOfMonth();
+
+            $monthlyExpenses[] = [
+                'month' => $month->format('M Y'),
+                'expenses' => round(Expense::whereBetween('expense_date', [$monthStart, $monthEnd])->sum('amount'), 2),
+            ];
+        }
+
+        // Expenses by category
+        $expensesByCategory = Expense::selectRaw('category, sum(amount) as total')
+            ->groupBy('category')
+            ->orderByDesc('total')
+            ->get();
+
+        // Top selling products (packages + add-ons)
+        $serviceSales = Booking::join('services', 'bookings.service_id', '=', 'services.id')
+            ->selectRaw('services.name, count(*) as units, sum(bookings.amount_paid) as revenue')
+            ->whereIn('bookings.status', ['confirmed', 'completed'])
+            ->groupBy('services.name')
+            ->get()
+            ->map(fn($row) => [
+                'name' => $row->name,
+                'type' => 'Package',
+                'units' => (int) $row->units,
+                'revenue' => round((float) $row->revenue, 2),
+            ]);
+
+        $addonSales = DB::table('addon_booking')
+            ->join('addons', 'addons.id', '=', 'addon_booking.addon_id')
+            ->join('bookings', 'bookings.id', '=', 'addon_booking.booking_id')
+            ->whereIn('bookings.status', ['confirmed', 'completed'])
+            ->selectRaw('addons.name, sum(addon_booking.quantity) as units, sum(addon_booking.quantity * addon_booking.price_at_time) as revenue')
+            ->groupBy('addons.name')
+            ->get()
+            ->map(fn($row) => [
+                'name' => $row->name,
+                'type' => 'Add-On',
+                'units' => (int) $row->units,
+                'revenue' => round((float) $row->revenue, 2),
+            ]);
+
+        $topProducts = $serviceSales->concat($addonSales)
+            ->sortByDesc('units')
+            ->values()
+            ->take(8);
 
         // Bookings by package
         $packageBreakdown = Booking::join('services', 'bookings.service_id', '=', 'services.id')
@@ -84,7 +145,10 @@ class AnalyticsController extends Controller
 
         return view('admin.analytics.index', compact(
             'overview', 'statusBreakdown', 'packageBreakdown',
-            'monthlyBookings', 'monthlyRevenue', 'popularTimes', 'bookingsByDay'
-        ));
+            'monthlyBookings', 'monthlyRevenue', 'popularTimes', 'bookingsByDay',
+            'totalExpenses', 'monthExpenses', 'yearExpenses',
+            'netProfit', 'monthNetProfit', 'yearNetProfit',
+            'monthlyExpenses', 'expensesByCategory', 'topProducts'
+        ))->with('user', auth()->user());
     }
 }
