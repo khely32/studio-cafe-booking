@@ -94,6 +94,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::resource('polls', PollController::class)->except(['show']);
     Route::post('/polls/{poll}/toggle-close', [PollController::class, 'toggleClose'])->name('polls.toggle-close');
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+    Route::get('/developer-support', [AdminController::class, 'developerSupport'])->name('developer-support');
 });
 
 Route::prefix('dashboard')->name('client.')->middleware('client')->group(function () {

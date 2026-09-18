@@ -144,4 +144,16 @@ class AdminController extends Controller
         \App\Models\Setting::set('slack_webhook_url', $request->slack_webhook_url);
         return redirect()->route('admin.pages.index')->with('success', 'Slack webhook saved.');
     }
+
+    public function developerSupport()
+    {
+        $developer = [
+            'name'  => 'Chuquel P. Perez',
+            'role'  => 'Web Developer',
+            'phone' => '09932574463',
+            'email' => 'johnchuquel@gmail.com',
+        ];
+
+        return view('admin.developer-support', compact('developer'));
+    }
 }

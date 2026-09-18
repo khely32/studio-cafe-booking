@@ -609,6 +609,7 @@
                     ['route' => 'admin.polls.index', 'label' => 'Polls', 'data-page' => 'Polls'],
                     ['route' => 'admin.settings.reminders', 'label' => 'Reminders', 'data-page' => 'Reminders'],
                     ['route' => 'admin.settings.homepage', 'label' => 'Settings', 'data-page' => 'Settings'],
+                    ['route' => 'admin.developer-support', 'label' => 'Developer Support', 'data-page' => 'Developer Support'],
                 ];
             @endphp
             @foreach($navLinks as $link)
@@ -664,9 +665,9 @@
     </div>
 
     {{-- Chat Widget --}}
-    <button class="chat-widget" onclick="alert('Chat support coming soon!')" aria-label="Chat support">
+    <a class="chat-widget" href="{{ route('admin.developer-support') }}" aria-label="Chat support">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    </button>
+    </a>
 
     {{-- Page Transition Overlay --}}
     <div class="page-overlay" id="pageOverlay">
