@@ -11,12 +11,12 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --primary: #111827;
-            --primary-light: #1F2937;
-            --accent: #0F766E;
-            --accent-light: #CCFBF1;
-            --accent-dark: #115E59;
-            --white: #FFFFFF;
+            --primary: #2C221E;
+            --primary-light: #3D312A;
+            --accent: #A37B2C;
+            --accent-light: #F0EAE1;
+            --accent-dark: #8A6520;
+            --white: #FAF8F5;
             --bg: #FAF8F5;
             --gray-50: #FAF8F5;
             --gray-100: #F0E8DD;
@@ -35,7 +35,7 @@
             --danger: #EF4444;
             --danger-bg: #FEF2F2;
             --info: #3B82F6;
-            --info-bg: #EFF6FF;
+            --info-bg: #F0EAE1;
             --radius: 16px;
             --radius-sm: 10px;
             --radius-xs: 8px;
@@ -51,7 +51,11 @@
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #F8F6F2 0%, #F3ECE3 35%, #EFE7DC 70%, #FAF9F6 100%);
+            background:
+                radial-gradient(ellipse 60% 45% at 12% 8%,  rgba(200,169,106,0.10), transparent 60%),
+                radial-gradient(ellipse 55% 40% at 88% 92%, rgba(139,111,71,0.08), transparent 60%),
+                linear-gradient(150deg, #FBF8F2 0%, #F6EFE3 30%, #EFE1CC 65%, #FAF6EF 100%);
+            background-attachment: fixed;
             color: var(--gray-800);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
@@ -67,11 +71,11 @@
         }
         .admin-bg-decor .orb-1 {
             width: 400px; height: 400px; top: -150px; right: -100px;
-            background: radial-gradient(circle, rgba(201,169,110,0.08), transparent 70%);
+            background: radial-gradient(circle, rgba(200,169,106,0.12), transparent 70%);
         }
         .admin-bg-decor .orb-2 {
             width: 350px; height: 350px; bottom: -120px; left: -80px;
-            background: radial-gradient(circle, rgba(139,111,71,0.06), transparent 70%);
+            background: radial-gradient(circle, rgba(139,111,71,0.09), transparent 70%);
         }
         .admin-bg-decor .grain {
             position: fixed; inset: 0; opacity: 0.015;
@@ -83,10 +87,10 @@
         .topnav {
             position: fixed; top: 0; left: 0; right: 0;
             height: 64px;
-            background: rgba(255,255,255,0.88);
+            background: rgba(250,248,245,0.88);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid #E5E7EB;
+            border-bottom: 1px solid #E3DAC9;
             display: flex; align-items: center;
             padding: 0 32px;
             gap: 32px;
@@ -112,15 +116,15 @@
         }
         .topnav-links .tn-link {
             padding: 8px 16px; border-radius: 8px;
-            font-size: 13px; font-weight: 500; color: #6B7280;
+            font-size: 13px; font-weight: 500; color: #7A6E65;
             text-decoration: none; transition: all 0.2s;
             position: relative; white-space: nowrap;
         }
-        .topnav-links .tn-link:hover { color: #000; background: rgba(0,0,0,0.04); }
-        .topnav-links .tn-link.active { color: #000; font-weight: 600; }
+        .topnav-links .tn-link:hover { color: #2C221E; background: rgba(0,0,0,0.04); }
+        .topnav-links .tn-link.active { color: #2C221E; font-weight: 600; }
         .topnav-links .tn-link.active::after {
             content: ''; position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
-            width: 20px; height: 2.5px; border-radius: 2px; background: #1A3B32;
+            width: 20px; height: 2.5px; border-radius: 2px; background: #A37B2C;
             animation: hglSweep 0.5s cubic-bezier(0.4,0,0.2,1) both, hglPulse 2.8s ease-in-out 0.6s infinite;
         }
         @keyframes hglSweep {
@@ -128,8 +132,8 @@
             to { width: 20px; opacity: 1; }
         }
         @keyframes hglPulse {
-            0%, 100% { box-shadow: 0 0 4px rgba(26,59,50,0.15); }
-            50% { box-shadow: 0 0 10px rgba(26,59,50,0.35); }
+            0%, 100% { box-shadow: 0 0 4px rgba(163,123,44,0.15); }
+            50% { box-shadow: 0 0 10px rgba(163,123,44,0.35); }
         }
         .topnav-links .tn-link:not(.active):hover { transform: translateY(-1px); }
 
@@ -140,21 +144,21 @@
         .tn-btn {
             width: 36px; height: 36px; border-radius: 10px;
             border: none; background: transparent;
-            color: #6B7280; cursor: pointer;
+            color: #7A6E65; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: all 0.2s;
         }
-        .tn-btn:hover { background: rgba(0,0,0,0.04); color: #000; }
+        .tn-btn:hover { background: rgba(0,0,0,0.04); color: #2C221E; }
         .tn-btn svg { width: 18px; height: 18px; }
 
         .tn-avatar {
             width: 36px; height: 36px; border-radius: 10px;
-            background: #0F766E; color: #fff;
+            background: #A37B2C; color: #fff;
             display: flex; align-items: center; justify-content: center;
             font-weight: 600; font-size: 13px; cursor: pointer;
             transition: all 0.2s; position: relative;
         }
-        .tn-avatar:hover { box-shadow: 0 0 0 3px rgba(15,118,110,0.2); }
+        .tn-avatar:hover { box-shadow: 0 0 0 3px rgba(163,123,44,0.2); }
         .tn-notif-badge {
             position: absolute; top: -4px; right: -4px;
             background: #EF4444; color: #fff;
@@ -166,7 +170,7 @@
 
         .tn-dropdown {
             position: absolute; top: calc(100% + 8px); right: 0;
-            background: #fff; border: 1px solid #E5E7EB;
+            background:#FAF8F5; border: 1px solid #E3DAC9;
             border-radius: var(--radius-sm);
             box-shadow: var(--shadow-lg);
             min-width: 200px;
@@ -180,16 +184,16 @@
         .tn-dropdown-item {
             display: flex; align-items: center; gap: 10px;
             padding: 9px 12px; border-radius: var(--radius-xs);
-            font-size: 13px; color: #374151;
+            font-size: 13px; color: #3D312A;
             cursor: pointer; transition: all 0.15s;
             text-decoration: none; border: none; background: none;
             width: 100%; text-align: left; font-family: inherit;
         }
-        .tn-dropdown-item:hover { background: #F9FAFB; color: #111; }
+        .tn-dropdown-item:hover { background: #FAF7F2; color: #2C221E; }
         .tn-dropdown-item.danger { color: #EF4444; }
         .tn-dropdown-item.danger:hover { background: #FEF2F2; }
-        .tn-dropdown-item svg { width: 16px; height: 16px; flex-shrink: 0; color: #9CA3AF; }
-        .tn-dropdown-divider { height: 1px; background: #F3F4F6; margin: 4px 0; }
+        .tn-dropdown-item svg { width: 16px; height: 16px; flex-shrink: 0; color: #7A6E65; }
+        .tn-dropdown-divider { height: 1px; background: #F0EAE1; margin: 4px 0; }
 
         /* === MAIN CONTENT === */
         .main-wrap {
@@ -297,7 +301,7 @@
         .btn::after {
             content: '';
             position: absolute; inset: 0;
-            background: rgba(255,255,255,0.15);
+            background: rgba(250,248,245,0.15);
             transform: translateX(-100%);
             transition: transform 0.4s;
         }
@@ -312,7 +316,7 @@
             background: var(--accent);
             color: #fff;
         }
-        .btn-accent:hover { background: var(--accent-dark); box-shadow: 0 4px 12px rgba(15,118,110,0.3); }
+        .btn-accent:hover { background: var(--accent-dark); box-shadow: 0 4px 12px rgba(163,123,44,0.3); }
         .btn-secondary {
             background: var(--white);
             color: var(--gray-700);
@@ -421,7 +425,7 @@
         .badge-success { background: var(--success-bg); color: #065F46; }
         .badge-warning { background: var(--warning-bg); color: #92400E; }
         .badge-danger { background: var(--danger-bg); color: #991B1B; }
-        .badge-info { background: var(--info-bg); color: #1E40AF; }
+        .badge-info { background: var(--info-bg); color: #8A6520; }
         .badge-neutral { background: var(--gray-100); color: var(--gray-600); }
 
         /* === PAGINATION === */
@@ -503,7 +507,7 @@
         .chat-widget {
             position: fixed; bottom: 24px; right: 24px; z-index: 9999;
             width: 52px; height: 52px; border-radius: 50%;
-            background: #1A3B32; color: #fff;
+            background: #2C221E; color: #fff;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; border: none;
             box-shadow: 0 4px 20px rgba(0,0,0,0.25);
@@ -525,7 +529,7 @@
             display: flex; flex-direction: column; align-items: center; gap: 16px;
         }
         .page-overlay .loader-hint {
-            font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.65);
+            font-size: 13px; font-weight: 500; color: rgba(250,248,245,0.65);
             letter-spacing: 0.3px; text-align: center;
         }
         .page-overlay .loader-badge {
@@ -536,31 +540,31 @@
             position: absolute; inset: 0;
             border-radius: 50%;
             border: 3px solid transparent;
-            border-top-color: rgba(255,255,255,0.9);
-            border-right-color: rgba(255,255,255,0.4);
+            border-top-color: rgba(250,248,245,0.9);
+            border-right-color: rgba(250,248,245,0.4);
             animation: spin 0.9s cubic-bezier(0.4,0,0.2,1) infinite;
         }
         .page-overlay .loader-badge .ring-2 {
             position: absolute; inset: -10px;
             border-radius: 50%;
             border: 2px solid transparent;
-            border-bottom-color: rgba(26,59,50,0.7);
-            border-left-color: rgba(26,59,50,0.3);
+            border-bottom-color: rgba(163,123,44,0.7);
+            border-left-color: rgba(163,123,44,0.3);
             animation: spin 1.4s cubic-bezier(0.4,0,0.2,1) infinite reverse;
         }
         .page-overlay .loader-badge .glow {
             position: absolute; inset: -24px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(26,59,50,0.35) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(163,123,44,0.35) 0%, transparent 70%);
             animation: pulseGlow 2s ease-in-out infinite;
         }
         .page-overlay .loader-badge .brand-square {
             width: 56px; height: 56px; border-radius: 14px;
-            background: #1A3B32; color: #fff;
+            background: #2C221E; color: #fff;
             display: flex; align-items: center; justify-content: center;
             font-size: 20px; font-weight: 800; letter-spacing: 0.5px;
             font-family: 'Inter', sans-serif; z-index: 1;
-            box-shadow: 0 4px 20px rgba(26,59,50,0.3);
+            box-shadow: 0 4px 20px rgba(44,34,30,0.3);
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -630,9 +634,9 @@
             <div style="position:relative;">
                 <div class="tn-avatar" onclick="toggleProfileDropdown()" id="profileBtn" tabindex="0" role="button" aria-label="Profile menu">A<span class="tn-notif-badge">1</span></div>
                 <div class="tn-dropdown" id="profileDropdown">
-                    <div style="padding:12px;border-bottom:1px solid #F3F4F6;margin-bottom:4px;">
-                        <div style="font-weight:600;font-size:14px;color:#111;">Admin</div>
-                        <div style="font-size:12px;color:#6B7280;">admin@5630studio.com</div>
+                    <div style="padding:12px;border-bottom:1px solid #F0EAE1;margin-bottom:4px;">
+                        <div style="font-weight:600;font-size:14px;color:#2C221E;">Admin</div>
+                        <div style="font-size:12px;color:#7A6E65;">admin@5630studio.com</div>
                     </div>
                     <button class="tn-dropdown-item" onclick="window.location='{{ route('home') }}'">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>

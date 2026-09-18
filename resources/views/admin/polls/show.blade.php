@@ -16,7 +16,7 @@
 </div>
 
 <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
-    <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 40px rgba(139,111,71,0.08);">
+    <div style="background:linear-gradient(135deg,rgba(250,248,245,0.9),rgba(250,248,245,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(250,248,245,0.5);border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 40px rgba(139,111,71,0.08);">
         <div style="padding:20px 24px;border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:space-between;">
             <h2 style="font-size:16px;font-weight:700;font-family:Poppins,sans-serif;color:var(--gray-900);">{{ $poll->question }}</h2>
             <span style="font-size:13px;color:var(--gray-500);">{{ $poll->total_votes }} total votes</span>
@@ -36,7 +36,7 @@
             @endforeach
         </div>
     </div>
-    <div style="background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 40px rgba(139,111,71,0.08);align-self:start;">
+    <div style="background:linear-gradient(135deg,rgba(250,248,245,0.9),rgba(250,248,245,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(250,248,245,0.5);border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 40px rgba(139,111,71,0.08);align-self:start;">
         <div style="padding:20px 24px;border-bottom:1px solid rgba(0,0,0,0.04);">
             <h2 style="font-size:14px;font-weight:700;font-family:Poppins,sans-serif;color:var(--gray-900);">Info</h2>
         </div>

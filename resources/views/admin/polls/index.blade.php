@@ -6,7 +6,7 @@
     .glass-table { width:100%; border-collapse:separate; border-spacing:0; }
     .glass-table thead th {
         padding:14px 18px; text-align:left; font-size:12px; font-weight:600;
-        text-transform:uppercase; letter-spacing:0.5px; color:rgba(255,255,255,0.9);
+        text-transform:uppercase; letter-spacing:0.5px; color:rgba(250,248,245,0.9);
         background:var(--gradient-1); font-family:Poppins,sans-serif;
     }
     .glass-table thead th:first-child { border-radius:14px 0 0 0; }
@@ -27,7 +27,7 @@
     <a href="{{ route('admin.polls.create') }}" class="btn btn-primary">+ New Poll</a>
 </div>
 
-<div style="background:linear-gradient(135deg,rgba(255,255,255,0.85),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 35px rgba(139,111,71,0.06);">
+<div style="background:linear-gradient(135deg,rgba(250,248,245,0.85),rgba(250,248,245,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(250,248,245,0.5);border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 35px rgba(139,111,71,0.06);">
     @if($polls->isEmpty())
     <div style="padding:60px 20px;text-align:center;"><div style="width:64px;height:64px;border-radius:16px;background:rgba(139,111,71,0.08);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;">🗳️</div><p style="color:var(--gray-400);font-size:14px;">No polls yet.</p></div>
     @else

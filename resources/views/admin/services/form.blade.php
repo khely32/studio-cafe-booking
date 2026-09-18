@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div style="max-width:720px;background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);">
+<div style="max-width:720px;background:linear-gradient(135deg,rgba(250,248,245,0.9),rgba(250,248,245,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(250,248,245,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);">
     <div>
         <form method="POST" action="{{ isset($service) ? route('admin.services.update', $service) : route('admin.services.store') }}">
             @csrf
@@ -83,9 +83,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 
 <div id="crop-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:16px;padding:20px;max-width:92vw;max-height:88vh;width:680px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-        <div style="font-weight:600;margin-bottom:12px;color:#111;">Crop your photo</div>
-        <div style="flex:1;min-height:0;overflow:auto;background:#111;border-radius:10px;">
+    <div style="background:#FAF8F5;border-radius:16px;padding:20px;max-width:92vw;max-height:88vh;width:680px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="font-weight:600;margin-bottom:12px;color:#2C221E;">Crop your photo</div>
+        <div style="flex:1;min-height:0;overflow:auto;background:#2C221E;border-radius:10px;">
             <img id="crop-image" alt="Crop" style="display:block;max-width:100%;">
         </div>
         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;">

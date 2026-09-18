@@ -12,10 +12,10 @@
         padding: 10px 24px 6px; letter-spacing: 0.3px;
     }
     .addon-item {
-        background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7));
+        background: linear-gradient(135deg, rgba(250,248,245,0.85), rgba(250,248,245,0.7));
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,0.5);
+        border: 1px solid rgba(250,248,245,0.5);
         border-radius: var(--radius-sm);
         padding: 14px 24px;
         display: flex;
@@ -39,7 +39,7 @@
     .addon-actions a, .addon-actions button {
         padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 500;
         cursor: pointer; transition: all 0.2s; border: 1px solid rgba(0,0,0,0.06);
-        background: rgba(255,255,255,0.8);
+        background: rgba(250,248,245,0.8);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         color: var(--gray-600); text-decoration: none; font-family: inherit;

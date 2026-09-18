@@ -5,15 +5,15 @@
 @section('content')
 <style>
     :root {
-        --bp-primary: #111827;
-        --bp-accent: #0F766E;
+        --bp-primary: #2C221E;
+        --bp-accent: #A37B2C;
         --bp-accent-hover: #115E59;
         --bp-bg: #F8FAFC;
-        --bp-card-bg: #FFFFFF;
-        --bp-border: #E5E7EB;
+        --bp-card-bg: #FAF8F5;
+        --bp-border: #E3DAC9;
         --bp-border-light: #F1F5F9;
-        --bp-text: #111827;
-        --bp-text-secondary: #64748B;
+        --bp-text: #2C221E;
+        --bp-text-secondary: #7A6E65;
         --bp-text-muted: #94A3B8;
         --bp-success: #22C55E;
         --bp-radius: 14px;
@@ -61,7 +61,7 @@
         cursor: pointer; font-family: 'Inter', sans-serif; transition: var(--bp-transition);
     }
     .bp-btn-filter svg { width: 16px; height: 16px; }
-    .bp-btn-filter:hover { border-color: #D1D5DB; background: #F9FAFB; }
+    .bp-btn-filter:hover { border-color: #E3DAC9; background: #FAF7F2; }
 
     .bp-sort-select {
         padding: 8px 32px 8px 16px;
@@ -72,17 +72,17 @@
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
         background-repeat: no-repeat; background-position: right 12px center;
     }
-    .bp-sort-select:focus { outline: none; border-color: #9CA3AF; }
+    .bp-sort-select:focus { outline: none; border-color: #7A6E65; }
 
     .bp-view-toggle {
         display: flex; gap: 2px;
-        background: #F3F4F6; border-radius: var(--bp-radius-pill);
+        background: #F0EAE1; border-radius: var(--bp-radius-pill);
         padding: 3px;
     }
     .bp-view-btn {
         width: 34px; height: 34px; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        border: none; background: transparent; color: #9CA3AF;
+        border: none; background: transparent; color: #7A6E65;
         cursor: pointer; transition: var(--bp-transition);
     }
     .bp-view-btn svg { width: 16px; height: 16px; }
@@ -111,7 +111,7 @@
         background: var(--bp-card-bg); color: var(--bp-text);
         transition: var(--bp-transition);
     }
-    .bp-search-wrap input:focus { outline: none; border-color: #9CA3AF; box-shadow: 0 0 0 3px rgba(15,118,110,0.08); }
+    .bp-search-wrap input:focus { outline: none; border-color: #7A6E65; box-shadow: 0 0 0 3px rgba(15,118,110,0.08); }
     .bp-search-wrap input::placeholder { color: var(--bp-text-muted); }
     .bp-search-icon {
         position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
@@ -130,11 +130,11 @@
         animation: fadeUp 0.35s ease both;
         cursor: default;
     }
-    .bp-card:hover { box-shadow: var(--bp-shadow-md); border-color: #D1D5DB; transform: translateY(-2px); }
+    .bp-card:hover { box-shadow: var(--bp-shadow-md); border-color: #E3DAC9; transform: translateY(-2px); }
 
     .bp-card-logo {
         width: 52px; height: 52px; border-radius: 14px;
-        background: linear-gradient(135deg, #0F766E, #14B8A6);
+        background: linear-gradient(135deg, #A37B2C, #14B8A6);
         color: #fff; display: flex; align-items: center; justify-content: center;
         font-weight: 700; font-size: 18px; flex-shrink: 0;
         position: relative;
@@ -166,7 +166,7 @@
         font-size: 11px; font-weight: 600;
     }
     .bp-card-status.published { background: #DCFCE7; color: #065F46; }
-    .bp-card-status.draft { background: #F3F4F6; color: #6B7280; }
+    .bp-card-status.draft { background: #F0EAE1; color: #7A6E65; }
 
     .bp-card-actions {
         display: flex; align-items: center; gap: 6px;
@@ -180,7 +180,7 @@
         transition: var(--bp-transition); position: relative;
     }
     .bp-card-action svg { width: 16px; height: 16px; }
-    .bp-card-action:hover { background: #F3F4F6; border-color: var(--bp-border); color: var(--bp-text-secondary); }
+    .bp-card-action:hover { background: #F0EAE1; border-color: var(--bp-border); color: var(--bp-text-secondary); }
     .bp-card-action[data-tip]:hover::after {
         content: attr(data-tip); position: absolute; bottom: calc(100% + 8px);
         left: 50%; transform: translateX(-50%);
@@ -203,17 +203,17 @@
     .bp-card-dropdown-item {
         display: flex; align-items: center; gap: 8px;
         padding: 8px 12px; border-radius: 6px;
-        font-size: 12px; color: #374151;
+        font-size: 12px; color: #3D312A;
         cursor: pointer; transition: background 0.15s;
         text-decoration: none; border: none; background: none;
         width: 100%; text-align: left; font-family: inherit;
     }
-    .bp-card-dropdown-item svg { width: 14px; height: 14px; flex-shrink: 0; color: #9CA3AF; }
-    .bp-card-dropdown-item:hover { background: #F9FAFB; color: var(--bp-text); }
+    .bp-card-dropdown-item svg { width: 14px; height: 14px; flex-shrink: 0; color: #7A6E65; }
+    .bp-card-dropdown-item:hover { background: #FAF7F2; color: var(--bp-text); }
     .bp-card-dropdown-item.danger { color: #EF4444; }
     .bp-card-dropdown-item.danger:hover { background: #FEF2F2; }
     .bp-card-dropdown-item.danger svg { color: #EF4444; }
-    .bp-card-dropdown-divider { height: 1px; background: #F3F4F6; margin: 4px; }
+    .bp-card-dropdown-divider { height: 1px; background: #F0EAE1; margin: 4px; }
 
     /* ── Sidebar ── */
     .bp-sidebar-section {
@@ -228,7 +228,7 @@
         transition: var(--bp-transition);
     }
     .bp-sidebar-card:last-child { margin-bottom: 0; }
-    .bp-sidebar-card:hover { border-color: #D1D5DB; box-shadow: var(--bp-shadow); transform: translateY(-1px); }
+    .bp-sidebar-card:hover { border-color: #E3DAC9; box-shadow: var(--bp-shadow); transform: translateY(-1px); }
     .bp-sidebar-card a { text-decoration: none; color: inherit; display: block; }
 
     .bp-sidebar-card .card-title {
@@ -371,12 +371,12 @@
         @if($pages->isEmpty())
         <div class="bp-empty">
             <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="16" y="18" width="48" height="36" rx="6" stroke="#D1D5DB" stroke-width="2" fill="#F9FAFB"/>
-                <rect x="24" y="28" width="32" height="4" rx="2" fill="#E5E7EB"/>
-                <rect x="24" y="36" width="22" height="4" rx="2" fill="#E5E7EB"/>
-                <rect x="24" y="44" width="28" height="4" rx="2" fill="#E5E7EB"/>
-                <circle cx="40" cy="60" r="12" fill="#E5E7EB"/>
-                <path d="M36 60l3 3 5-5" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="16" y="18" width="48" height="36" rx="6" stroke="#E3DAC9" stroke-width="2" fill="#FAF7F2"/>
+                <rect x="24" y="28" width="32" height="4" rx="2" fill="#E3DAC9"/>
+                <rect x="24" y="36" width="22" height="4" rx="2" fill="#E3DAC9"/>
+                <rect x="24" y="44" width="28" height="4" rx="2" fill="#E3DAC9"/>
+                <circle cx="40" cy="60" r="12" fill="#E3DAC9"/>
+                <path d="M36 60l3 3 5-5" stroke="#7A6E65" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             <h3>No booking pages yet</h3>
             <p>Get started by creating your first booking page.</p>
@@ -506,7 +506,7 @@
             </div>
             <div class="form-group">
                 <label>Color</label>
-                <input type="color" name="color" value="#0F766E" style="width:50px;height:36px;border:1px solid var(--bp-border);border-radius:6px;cursor:pointer;">
+                <input type="color" name="color" value="#A37B2C" style="width:50px;height:36px;border:1px solid var(--bp-border);border-radius:6px;cursor:pointer;">
             </div>
             <div class="bp-modal-actions">
                 <button type="button" class="btn btn-secondary" onclick="this.closest('.bp-modal-overlay').classList.remove('open')">Cancel</button>

@@ -11,11 +11,11 @@
 </div>
 
 @if($members->isEmpty())
-<div style="background:linear-gradient(135deg,rgba(255,255,255,0.85),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:60px 20px;text-align:center;color:var(--gray-400);font-size:14px;box-shadow:0 10px 35px rgba(139,111,71,0.06);">No team members yet.</div>
+<div style="background:linear-gradient(135deg,rgba(250,248,245,0.85),rgba(250,248,245,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(250,248,245,0.5);border-radius:var(--radius);padding:60px 20px;text-align:center;color:var(--gray-400);font-size:14px;box-shadow:0 10px 35px rgba(139,111,71,0.06);">No team members yet.</div>
 @else
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;">
     @foreach($members as $m)
-    <div style="background:linear-gradient(135deg,rgba(255,255,255,0.85),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:20px;box-shadow:0 4px 20px rgba(139,111,71,0.06);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 12px 40px rgba(139,111,71,0.12)';this.style.borderColor='rgba(201,169,110,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow='';this.style.borderColor=''">
+    <div style="background:linear-gradient(135deg,rgba(250,248,245,0.85),rgba(250,248,245,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(250,248,245,0.5);border-radius:var(--radius);padding:20px;box-shadow:0 4px 20px rgba(139,111,71,0.06);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 12px 40px rgba(139,111,71,0.12)';this.style.borderColor='rgba(201,169,110,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow='';this.style.borderColor=''">
         <div>
             <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
                 <div style="width:44px;height:44px;border-radius:12px;background:var(--gradient-1);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:16px;flex-shrink:0;">{{ strtoupper(substr($m->name,0,1)) }}</div>

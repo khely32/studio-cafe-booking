@@ -5,10 +5,10 @@
 <style>
     .rm-grid { display: grid; grid-template-columns: 420px 1fr; gap: 20px; align-items: start; }
     .rm-panel {
-        background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
+        background: linear-gradient(135deg, rgba(250,248,245,0.9), rgba(250,248,245,0.6));
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,0.5);
+        border: 1px solid rgba(250,248,245,0.5);
         border-radius: var(--radius);
         padding: 24px;
         box-shadow: 0 10px 40px rgba(139,111,71,0.08);
@@ -17,27 +17,27 @@
     .rm-panel .sub { font-size: 12px; color: var(--gray-500); margin-bottom: 16px; }
     .rm-field { margin-bottom: 18px; }
     .rm-field label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
-    .rm-switch { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); }
+    .rm-switch { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background:#FAF8F5; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); }
     .rm-switch-text { font-size: 13px; font-weight: 600; color: var(--gray-800); }
     .rm-switch-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
     .rm-toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
     .rm-toggle input { opacity: 0; width: 0; height: 0; }
-    .rm-slider { position: absolute; inset: 0; background: #D1D5DB; border-radius: 9999px; transition: background 0.2s; cursor: pointer; }
-    .rm-slider::before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff; top: 3px; left: 3px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-    .rm-toggle input:checked + .rm-slider { background: #1A3B32; }
+    .rm-slider { position: absolute; inset: 0; background: #E3DAC9; border-radius: 9999px; transition: background 0.2s; cursor: pointer; }
+    .rm-slider::before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background:#FAF8F5; top: 3px; left: 3px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .rm-toggle input:checked + .rm-slider { background: #2C221E; }
     .rm-toggle input:checked + .rm-slider::before { transform: translateX(20px); }
     .rm-note {
         margin-top: 14px; padding: 12px 14px; border-radius: var(--radius-sm);
         background: #FFF8E1; border: 1px solid #FFECB3; font-size: 12px; color: #8D6E04; line-height: 1.6;
     }
-    .rm-table-wrap { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; box-shadow: 0 10px 40px rgba(139,111,71,0.08); }
+    .rm-table-wrap { background:#FAF8F5; border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; box-shadow: 0 10px 40px rgba(139,111,71,0.08); }
     .rm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .rm-table th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--gray-500); border-bottom: 1px solid var(--gray-200); background: #FAFAF9; }
-    .rm-table td { padding: 12px 16px; border-bottom: 1px solid #F3F4F6; color: var(--gray-800); vertical-align: middle; }
+    .rm-table td { padding: 12px 16px; border-bottom: 1px solid #F0EAE1; color: var(--gray-800); vertical-align: middle; }
     .rm-table tr:last-child td { border-bottom: none; }
     .rm-table tr:hover td { background: #FAFAF9; }
     .rm-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
-    .rm-badge.sent { background: #E7F1EC; color: #1A3B32; }
+    .rm-badge.sent { background: #E7F1EC; color: #2C221E; }
     .rm-badge.pending { background: #FEF3C7; color: #B45309; }
     .rm-badge.due-soon { background: #FEE2E2; color: #B91C1C; }
     .rm-empty { padding: 40px 16px; text-align: center; color: var(--gray-500); font-size: 13px; }

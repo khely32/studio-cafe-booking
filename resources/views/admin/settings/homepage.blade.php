@@ -5,10 +5,10 @@
 <style>
     .settings-editor { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
     .settings-panel {
-        background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
+        background: linear-gradient(135deg, rgba(250,248,245,0.9), rgba(250,248,245,0.6));
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,0.5);
+        border: 1px solid rgba(250,248,245,0.5);
         border-radius: var(--radius);
         padding: 24px;
         box-shadow: 0 10px 40px rgba(139,111,71,0.08);
@@ -21,7 +21,7 @@
     }
     .settings-hint code { background: rgba(139,111,71,0.1); padding: 1px 5px; border-radius: 4px; color: var(--gray-700); }
     .preview-box {
-        margin-top: 14px; padding: 14px; background: #fff; border: 1px solid var(--gray-200);
+        margin-top: 14px; padding: 14px; background:#FAF8F5; border: 1px solid var(--gray-200);
         border-radius: var(--radius-sm); font-size: 13px; line-height: 1.7; color: var(--gray-800);
         display: none;
     }

@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div style="max-width:720px;background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,255,255,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);">
+<div style="max-width:720px;background:linear-gradient(135deg,rgba(250,248,245,0.9),rgba(250,248,245,0.6));backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(250,248,245,0.5);border-radius:var(--radius);padding:28px;box-shadow:0 10px 40px rgba(139,111,71,0.08);">
     <div>
         <form method="POST" action="{{ isset($addon) ? route('admin.addons.update', $addon) : route('admin.addons.store') }}">
             @csrf
