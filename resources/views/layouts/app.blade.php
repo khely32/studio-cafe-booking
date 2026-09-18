@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=3">
     <title>56'30 Studio Cafe - Self-Capture Photo Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -425,6 +427,7 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        @keyframes neonPulse { 0%,100%{box-shadow:0 0 20px rgba(139,111,71,0.5),0 0 40px rgba(201,169,110,0.25)} 50%{box-shadow:0 0 30px rgba(139,111,71,0.7),0 0 60px rgba(201,169,110,0.35)} }
         .animate-in { animation: fadeInUp 0.6s ease forwards; }
 
         /* === COFFEE DECOR ELEMENTS === */
@@ -510,37 +513,6 @@
         <p style="margin-top:8px;font-size:12px;opacity:0.5;">&copy; {{ date('Y') }} 56'30 Studio Cafe. All rights reserved.</p>
         <p style="margin-top:4px;font-size:11px;opacity:0.35;letter-spacing:1px;">by chuquel</p>
     </footer>
-
-    <div class="chuquel-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--cafe)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <circle cx="12" cy="12" r="4"/>
-            <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
-            <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-        </svg>
-        <div class="chuquel-name">chuquel</div>
-        <div class="chuquel-tag">studio brand</div>
-    </div>
-
-    <style>
-    .chuquel-badge {
-        position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-        background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
-        border: 1px solid var(--gray-200);
-        border-radius: 16px; padding: 14px 18px;
-        box-shadow: 0 4px 24px rgba(44,30,20,0.12);
-        text-align: center; min-width: 140px;
-        animation: fadeIn 0.5s ease;
-    }
-    .chuquel-badge svg { width: 40px; height: 40px; margin: 0 auto 6px; display: block; }
-    .chuquel-name { font-weight: 700; font-size: 15px; color: var(--cafe); font-family: 'Poppins', sans-serif; letter-spacing: 1px; }
-    .chuquel-tag { font-size: 9px; color: var(--gray-400); margin-top: 1px; text-transform: uppercase; letter-spacing: 1px; }
-    @keyframes neonPulse { 0%,100%{box-shadow:0 0 20px rgba(139,111,71,0.5),0 0 40px rgba(201,169,110,0.25)} 50%{box-shadow:0 0 30px rgba(139,111,71,0.7),0 0 60px rgba(201,169,110,0.35)} }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @media (max-width: 768px) {
-        .chuquel-badge { display: none; }
-    }
-    </style>
 
     <script>
         window.addEventListener('scroll', () => {

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=3">
     <title>@yield('title', 'My Dashboard') - 56'30 Studio Cafe</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -225,19 +227,6 @@
         .empty-state .icon { font-size: 40px; margin-bottom: 10px; opacity: 0.3; }
         .empty-state p { color: var(--gray-400); font-size: 13px; }
 
-        .chuquel-badge {
-            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-            background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
-            border: 1px solid rgba(224,212,196,0.4); border-radius: 16px; padding: 12px 16px;
-            box-shadow: 0 4px 24px rgba(44,30,20,0.12);
-            text-align: center; min-width: 120px;
-            animation: fadeIn 0.5s ease;
-        }
-        .chuquel-badge svg { width: 32px; height: 32px; margin: 0 auto 4px; display: block; stroke: var(--cafe); }
-        .chuquel-badge .name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 13px; color: var(--cafe); letter-spacing: 0.5px; }
-        .chuquel-badge .tag { font-size: 8px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         @media (max-width: 768px) {
             .topbar { padding: 0 16px; }
             .main-content { padding: 20px 16px; }
@@ -293,17 +282,6 @@
             @endif
             @yield('content')
         </div>
-    </div>
-
-    <div class="chuquel-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <circle cx="12" cy="12" r="4"/>
-            <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
-            <path d="M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-        </svg>
-        <div class="name">chuquel</div>
-        <div class="tag">studio brand</div>
     </div>
 </body>
 </html>
