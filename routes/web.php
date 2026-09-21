@@ -38,6 +38,17 @@ Route::get('/api/payment-reminders', function () {
     return response('OK');
 });
 
+Route::get('/mail-diag', function () {
+    $pass = config('mail.mailers.smtp.password');
+    return response()->json([
+        'default_mailer' => config('mail.default'),
+        'host' => config('mail.mailers.smtp.host'),
+        'port' => config('mail.mailers.smtp.port'),
+        'username' => config('mail.mailers.smtp.username'),
+        'from_address' => config('mail.from.address'),
+    ]);
+});
+
 Route::get('/api/backup-db', function () {
     $secret = env('VERCEL_CRON_SECRET');
     if ($secret) {
