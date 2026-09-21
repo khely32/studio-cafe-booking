@@ -20,14 +20,14 @@ class BookingConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Booking Confirmed - {$this->booking->service->name} | 56'30 Studio Cafe",
+            subject: "Booking Confirmed! – 56'30 Studio Cafe",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.booking-confirmation',
+            html: 'emails.booking-confirmation',
         );
     }
 
