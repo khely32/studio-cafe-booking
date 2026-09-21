@@ -50,6 +50,16 @@ foreach (['PGHOST', 'PGHOST_UNPOOLED', 'PGDATABASE', 'PGUSER', 'PGPASSWORD', 'PG
 }
 
 /*
+| Mirror Vercel's mail env vars into $_ENV the same way. Set these in the
+| Vercel project dashboard so the SMTP credentials never live in the repo.
+*/
+foreach (['MAIL_MAILER', 'MAIL_HOST', 'MAIL_PORT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'MAIL_FROM_ADDRESS', 'MAIL_FROM_NAME', 'MAIL_SCHEME'] as $mailVar) {
+    if (isset($_SERVER[$mailVar]) && ! isset($_ENV[$mailVar])) {
+        $_ENV[$mailVar] = $_SERVER[$mailVar];
+    }
+}
+
+/*
 | Neon (Vercel Postgres) requires the endpoint ID when the client's libpq
 | does not support SNI. Pass it via PGOPTIONS, which libpq reads at connect.
 | Vercel's pooled hostname appends "-pooler" to the endpoint ID, so strip it.
