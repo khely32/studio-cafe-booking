@@ -29,6 +29,7 @@
     .confirm-hero h1 {
         font-family: 'Poppins', sans-serif;
         font-size: 36px; color: #fff; font-weight: 700;
+        text-shadow: 0 2px 12px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.6);
         position: relative; z-index: 1; animation: fadeInUp 0.6s ease 0.1s both;
     }
     .confirm-hero .ref-badge {
