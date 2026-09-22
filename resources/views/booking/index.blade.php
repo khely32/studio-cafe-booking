@@ -318,7 +318,21 @@
 
                     <div class="form-group">
                         <label>Email Address *</label>
-                        <input type="email" name="customer_email" class="form-control" required placeholder="your@email.com">
+                        <div style="display:flex;gap:10px;">
+                            <input type="email" name="customer_email" id="customer_email" class="form-control" required placeholder="your@email.com" oninput="resetEmailVerified()">
+                            <button type="button" class="btn btn-secondary" id="send-code-btn" style="flex-shrink:0;padding:12px 20px;" onclick="sendVerificationCode()">Send Code</button>
+                        </div>
+                        <div id="verify-box" style="display:none;margin-top:14px;padding:16px 18px;background:linear-gradient(135deg,#FDF8F0,#F0E4D4);border-radius:var(--radius-md);border:1px solid rgba(139,111,71,0.2);">
+                            <label style="display:block;font-size:13px;font-weight:600;margin-bottom:8px;">Enter 6-digit code</label>
+                            <div style="display:flex;gap:10px;">
+                                <input type="text" id="verification_code" class="form-control" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="••••••" style="letter-spacing:6px;text-align:center;font-weight:700;">
+                                <button type="button" class="btn btn-primary" id="verify-btn" style="flex-shrink:0;padding:12px 20px;" onclick="verifyEmailCode()">Verify</button>
+                            </div>
+                            <div id="verify-message" style="font-size:13px;margin-top:10px;display:none;"></div>
+                            <button type="button" id="resend-code-btn" style="display:none;background:none;border:none;color:var(--cafe);cursor:pointer;font-size:12px;margin-top:10px;font-family:'DM Sans',sans-serif;" onclick="resendCode()">Resend code</button>
+                            <div id="resend-countdown" style="font-size:12px;color:var(--gray-500);margin-top:10px;display:none;"></div>
+                        </div>
+                        <input type="hidden" id="email_verified" name="email_verified" value="0">
                     </div>
 
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
@@ -353,7 +367,7 @@
 
                 <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:28px;">
                     <button type="button" class="btn btn-secondary" onclick="goToStep(2)">Back</button>
-                    <button type="submit" class="btn btn-primary" style="padding:14px 36px;">Review Booking →</button>
+                    <button type="submit" class="btn btn-primary" style="padding:14px 36px;" disabled>Review Booking →</button>
                 </div>
             </form>
         </div>
@@ -389,6 +403,110 @@
 <script>
     let selectedService = null, selectedSlot = null, selectedDate = null;
     let currentMonth = new Date(), calendarDates = [];
+    let verifiedEmail = '';
+
+    function resetEmailVerified() {
+        verifiedEmail = '';
+        document.getElementById('email_verified').value = '0';
+        const vbox = document.getElementById('verify-box');
+        const vmsg = document.getElementById('verify-message');
+        if (vbox) vbox.style.display = 'none';
+        if (vmsg) { vmsg.style.display = 'none'; vmsg.textContent = ''; }
+        const submitBtn = document.querySelector('#booking-form button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+    }
+
+    async function sendVerificationCode() {
+        const email = document.getElementById('customer_email').value.trim();
+        const btn = document.getElementById('send-code-btn');
+        const msg = document.getElementById('verify-message');
+        if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+            showVerifyMsg('Please enter a valid email address first.', 'red');
+            return;
+        }
+        btn.disabled = true; btn.textContent = 'Sending...';
+        try {
+            const r = await fetch('{{ route("booking.verify-email") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ email })
+            });
+            const res = await r.json();
+            if (r.ok && res.success) {
+                document.getElementById('verify-box').style.display = 'block';
+                document.getElementById('verification_code').focus();
+                showVerifyMsg(res.message, 'green');
+                startResendCountdown(60);
+            } else {
+                showVerifyMsg(res.message || 'Failed to send code.', 'red');
+            }
+        } catch (e) {
+            showVerifyMsg('Network error while sending the code.', 'red');
+        } finally {
+            btn.disabled = false; btn.textContent = 'Send Code';
+        }
+    }
+
+    async function verifyEmailCode() {
+        const email = document.getElementById('customer_email').value.trim();
+        const code = document.getElementById('verification_code').value.trim();
+        const btn = document.getElementById('verify-btn');
+        if (!code || code.length !== 6) {
+            showVerifyMsg('Please enter the 6-digit code.', 'red');
+            return;
+        }
+        btn.disabled = true; btn.textContent = 'Verifying...';
+        try {
+            const r = await fetch('{{ route("booking.verify-code") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ email, code })
+            });
+            const res = await r.json();
+            if (r.ok && res.success) {
+                verifiedEmail = email;
+                document.getElementById('email_verified').value = '1';
+                document.getElementById('verification_code').value = '';
+                document.getElementById('resend-code-btn').style.display = 'none';
+                document.getElementById('resend-countdown').style.display = 'none';
+                const submitBtn = document.querySelector('#booking-form button[type="submit"]');
+                if (submitBtn) submitBtn.disabled = false;
+                showVerifyMsg('✓ Email verified! You may now continue.', 'green');
+                btn.innerHTML = '✔';
+            } else {
+                showVerifyMsg(res.message || 'Verification failed.', 'red');
+            }
+        } catch (e) {
+            showVerifyMsg('Network error while verifying.', 'red');
+        } finally {
+            btn.disabled = false; btn.textContent = 'Verify';
+        }
+    }
+
+    async function resendCode() {
+        resetEmailVerified();
+        document.getElementById('verify-box').style.display = 'block';
+        await sendVerificationCode();
+    }
+
+    function showVerifyMsg(text, color) {
+        const msg = document.getElementById('verify-message');
+        msg.textContent = text;
+        msg.style.color = color === 'red' ? '#DC2626' : '#065F46';
+        msg.style.display = 'block';
+    }
+
+    function startResendCountdown(seconds) {
+        const btn = document.getElementById('resend-code-btn');
+        const cd = document.getElementById('resend-countdown');
+        btn.style.display = 'none'; cd.style.display = 'block';
+        const tick = () => {
+            if (seconds <= 0) { cd.style.display = 'none'; btn.style.display = 'inline'; return; }
+            cd.textContent = `You can resend the code in ${seconds}s`;
+            seconds--; setTimeout(tick, 1000);
+        };
+        tick();
+    }
 
     function selectService(id, name, price, duration, maxPax) {
         document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('selected'));
@@ -487,6 +605,12 @@
     function submitBooking(e) {
         e.preventDefault();
         const data = new FormData(e.target);
+        if (!verifiedEmail || verifiedEmail !== data.get('customer_email').trim().toLowerCase()) {
+            if (document.getElementById('verify-box').style.display !== 'block') document.getElementById('verify-box').style.display = 'block';
+            showVerifyMsg('Please verify your email address before reviewing your booking.', 'red');
+            window.scrollTo({ top: document.getElementById('customer_email').getBoundingClientRect().top + window.scrollY - 140, behavior: 'smooth' });
+            return;
+        }
         const pm = data.get('payment_method');
         const due = pm === 'downpayment' ? (selectedService.price * 0.5) : selectedService.price;
         document.getElementById('summary-content').innerHTML = `

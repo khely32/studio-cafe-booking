@@ -8,7 +8,10 @@ use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use App\Mail\BookingConfirmation;
+use App\Mail\EmailVerificationCode;
 
 class BookingController extends Controller
 {
@@ -137,6 +140,103 @@ class BookingController extends Controller
         ]);
     }
 
+    public function sendVerificationCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|max:255',
+        ]);
+
+        $email = strtolower($request->email);
+
+        $recent = session()->get('email_verification_sent_at');
+        if ($recent && now()->diffInSeconds($recent) < 60) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please wait a moment before requesting another code.',
+            ], 429);
+        }
+
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        try {
+            Mail::to($email)->send(new EmailVerificationCode($code));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Verification email failed for {$email}: {$e->getMessage()}");
+            return response()->json([
+                'success' => false,
+                'message' => 'We could not send the code right now. Please try again.',
+            ], 502);
+        }
+
+        session()->put('email_verification_code', [
+            'email' => $email,
+            'code_hash' => Hash::make($code),
+            'expires_at' => now()->addMinutes(10),
+        ]);
+        session()->put('email_verification_sent_at', now());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Verification code sent to ' . $email . '. Check your inbox (and spam).',
+        ]);
+    }
+
+    public function verifyEmailCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|max:255',
+            'code' => 'required|string|size:6',
+        ]);
+
+        $email = strtolower($request->email);
+        $stored = session()->get('email_verification_code');
+
+        if (!$stored || $stored['email'] !== $email) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No code was requested for this email. Please request a code first.',
+            ], 422);
+        }
+
+        if (now()->greaterThan($stored['expires_at'])) {
+            session()->forget('email_verification_code');
+            return response()->json([
+                'success' => false,
+                'message' => 'This code has expired. Please request a new one.',
+            ], 422);
+        }
+
+        if (!Hash::check($request->code, $stored['code_hash'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Incorrect code. Please check and try again.',
+            ], 422);
+        }
+
+        $this->markEmailVerified($email);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Email verified successfully.',
+        ]);
+    }
+
+    public function resendVerificationCode(Request $request)
+    {
+        return $this->sendVerificationCode($request);
+    }
+
+    protected function markEmailVerified(string $email): void
+    {
+        session()->put('verified_customer_email', $email);
+        session()->forget('email_verification_code');
+    }
+
+    protected function isEmailVerified(string $email): bool
+    {
+        return session()->get('verified_customer_email') === strtolower($email);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -156,6 +256,14 @@ class BookingController extends Controller
 
         $service = Service::findOrFail($validated['service_id']);
         $totalAmount = $service->price;
+
+        if (!$this->isEmailVerified($validated['customer_email'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please verify your email address before confirming the booking. The verification code was sent to your inbox — enter it to continue.',
+                'errors' => ['customer_email' => ['Please verify your email address first.']],
+            ], 422);
+        }
 
         if (!empty($validated['addon_ids'])) {
             $addons = Addon::whereIn('id', $validated['addon_ids'])->get();
