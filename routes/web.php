@@ -62,9 +62,6 @@ Route::prefix('booking')->name('booking.')->group(function () {
     Route::get('/service/{service}', [BookingController::class, 'showService'])->name('service');
     Route::get('/slots', [BookingController::class, 'getAvailableSlots'])->name('slots');
     Route::get('/calendar', [BookingController::class, 'getCalendarDates'])->name('calendar');
-    Route::post('/verify-email', [BookingController::class, 'sendVerificationCode'])->middleware('throttle:3,1')->name('verify-email');
-    Route::post('/verify-code', [BookingController::class, 'verifyEmailCode'])->middleware('throttle:10,1')->name('verify-code');
-    Route::post('/resend-verification', [BookingController::class, 'resendVerificationCode'])->middleware('throttle:3,1')->name('resend-verification');
     Route::post('/', [BookingController::class, 'store'])->name('store');
     Route::get('/confirmation/{bookingRef}', [BookingController::class, 'confirmation'])->name('confirmation');
 });
