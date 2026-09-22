@@ -193,7 +193,11 @@ class BookingController extends Controller
             }
         }
 
-        Mail::to($booking->customer_email)->send(new BookingConfirmation($booking));
+        try {
+            Mail::to($booking->customer_email)->send(new BookingConfirmation($booking));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Booking confirmation email failed for {$booking->booking_ref}: {$e->getMessage()}");
+        }
 
         return response()->json([
             'success' => true,
