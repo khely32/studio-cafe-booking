@@ -484,7 +484,6 @@
                 </div>
                 <div class="navbar-brand-col">
                     <div class="navbar-text">56'30 <span>Studio</span></div>
-                    <div class="navbar-sub">by chuquel</div>
                 </div>
             </a>
             <div class="navbar-links">
@@ -511,7 +510,6 @@
         <div class="footer-divider"></div>
         <p>GCash / PayMaya: Ma. Jaliha Unlayao &middot; 09533651548</p>
         <p style="margin-top:8px;font-size:12px;opacity:0.5;">&copy; {{ date('Y') }} 56'30 Studio Cafe. All rights reserved.</p>
-        <p style="margin-top:4px;font-size:11px;opacity:0.35;letter-spacing:1px;">by chuquel</p>
     </footer>
 
     <script>

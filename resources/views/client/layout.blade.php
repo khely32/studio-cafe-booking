@@ -255,7 +255,6 @@
             </div>
             <div class="brand-text">
                 <div class="name">56'30 <span>Studio</span></div>
-                <div class="sub">by chuquel</div>
             </div>
         </div>
         <div class="topbar-right">
