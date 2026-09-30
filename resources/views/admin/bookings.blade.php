@@ -102,8 +102,15 @@
 /* ── Table ── */
 .bk-table-wrap {
     background:#FAF8F5; border: 1px solid #E3DAC9;
-    border-radius: 16px; overflow: hidden;
+    border-radius: 16px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    /* Scroll container. The row dropdown used to be cropped by this wrapper's
+       overflow; it is now portalled to <body> so this can scroll freely. */
+    max-height: min(70vh, 640px);
+    overflow-y: auto;
+    overflow-x: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
 }
 .bk-table { width: 100%; border-collapse: collapse; }
 .bk-table thead th {
@@ -111,6 +118,7 @@
     font-size: 11px; font-weight: 600;
     color: #7A6E65; text-transform: uppercase; letter-spacing: 0.5px;
     background: #FAF7F2; border-bottom: 1px solid #E3DAC9;
+    position: sticky; top: 0; z-index: 20;
 }
 .bk-table tbody td {
     padding: 16px; border-bottom: 1px solid #F0EAE1;
@@ -166,6 +174,12 @@
     display: none;
 }
 .bk-menu-drop.open { display: block; }
+/* Portalled to <body> while open, so the scroll container cannot clip it.
+   Coordinates are written inline by positionRowMenu(). */
+.bk-menu-drop.is-fixed {
+    position: fixed; top: 0; left: 0; right: auto;
+    margin: 0; z-index: 5000;
+}
 .bk-menu-drop a, .bk-menu-drop button {
     display: flex; align-items: center; gap: 10px;
     width: 100%; padding: 9px 12px; border-radius: 10px;
@@ -895,19 +909,105 @@ function togglePop(popId) {
     if (!wasOpen) pop.classList.add('open');
 }
 
-function toggleMenu(btn) {
-    const menu = btn.parentElement.querySelector('.bk-menu-drop');
-    const wasOpen = menu.classList.contains('open');
-    document.querySelectorAll('.bk-menu-drop').forEach(m => m.classList.remove('open'));
-    if (!wasOpen) menu.classList.add('open');
+let activeRowMenu = null;
+
+function closeRowMenus() {
+    if (activeRowMenu && activeRowMenu.parentNode) {
+        activeRowMenu.parentNode.removeChild(activeRowMenu);
+    }
+    activeRowMenu = null;
 }
+
+function toggleMenu(btn) {
+    const wasOpen = activeRowMenu && activeRowMenu.__trigger === btn;
+    closeRowMenus();
+    if (wasOpen) return;
+
+    // The dropdown lives inside the row, so the table's scroll container
+    // (overflow-y:auto) would clip it. Clone it out to <body> and position it
+    // against the viewport instead. Inline onclick handlers are preserved by
+    // cloneNode, and each one carries a literal booking id.
+    const source = btn.parentElement.querySelector('.bk-menu-drop');
+    if (!source) return;
+
+    const drop = source.cloneNode(true);
+    drop.__trigger = btn;
+    drop.classList.add('is-fixed');
+    document.body.appendChild(drop);
+    drop.classList.add('open');
+
+    activeRowMenu = drop;
+    positionRowMenu(drop, btn);
+}
+
+function positionRowMenu(drop, btn) {
+    const r = btn.getBoundingClientRect();
+    const gap = 8;
+    const pad = 12;
+
+    const vw = window.innerWidth || document.documentElement.clientWidth;
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+
+    // A viewport shorter than the menu is scrollable rather than clipped.
+    const maxH = vh - pad * 2;
+    if (drop.offsetHeight > maxH) {
+        drop.style.maxHeight = maxH + 'px';
+        drop.style.overflowY = 'auto';
+    } else {
+        drop.style.maxHeight = '';
+        drop.style.overflowY = '';
+    }
+
+    const w = drop.offsetWidth;
+    const h = drop.offsetHeight;
+
+    let left = r.right - w;
+    if (left + w > vw - pad) left = vw - w - pad;
+    if (left < pad) left = pad;
+
+    let top = r.bottom + gap;
+    if (top + h > vh - pad) {
+        const above = r.top - h - gap;
+        // Flip above the trigger, but only when it genuinely fits.
+        top = above >= pad ? above : Math.max(pad, vh - h - pad);
+    }
+
+    drop.style.left = Math.round(left) + 'px';
+    drop.style.top = Math.round(top) + 'px';
+}
+
+function syncRowMenu() {
+    if (!activeRowMenu) return;
+    const btn = activeRowMenu.__trigger;
+    const wrap = btn.closest('.bk-table-wrap');
+
+    if (!wrap) { closeRowMenus(); return; }
+
+    const wr = wrap.getBoundingClientRect();
+    const br = btn.getBoundingClientRect();
+
+    // Row scrolled out of sight: let it go rather than float over other rows.
+    if (br.bottom < wr.top || br.top > wr.bottom) { closeRowMenus(); return; }
+
+    positionRowMenu(activeRowMenu, btn);
+}
+
+document.addEventListener('scroll', function () {
+    syncRowMenu();
+}, true);
+
+window.addEventListener('resize', function () {
+    closeRowMenus();
+});
 
 document.addEventListener('click', function(e) {
     if (!e.target.closest('.bk-controls')) {
         document.querySelectorAll('.bk-pop').forEach(p => p.classList.remove('open'));
     }
-    if (!e.target.closest('.bk-menu')) {
-        document.querySelectorAll('.bk-menu-drop').forEach(m => m.classList.remove('open'));
+    // The portalled dropdown is outside .bk-menu, so it has to be excluded
+    // explicitly or clicking an item would count as an outside click.
+    if (!e.target.closest('.bk-menu') && !e.target.closest('.bk-menu-drop')) {
+        closeRowMenus();
     }
 });
 
@@ -940,6 +1040,7 @@ let bookingIndex = -1;
 const adminBookingsBase = '{{ url('admin/bookings') }}';
 
 function openBookingModal(id) {
+    closeRowMenus();
     bookingIndex = bookingList.findIndex(b => b.id === id);
     if (bookingIndex < 0) return;
     renderBooking();
@@ -1036,7 +1137,7 @@ function cancelBooking() {
 }
 
 function setBookingStatus(ui, id) {
-    document.querySelectorAll('.bk-menu-drop').forEach(function (m) { m.classList.remove('open'); });
+    closeRowMenus();
     let b;
     if (id) {
         b = bookingList.find(function (x) { return x.id === id; });
@@ -1128,7 +1229,7 @@ function todayISO() {
 }
 
 function openReschedule(id) {
-    document.querySelectorAll('.bk-menu-drop').forEach(function (m) { m.classList.remove('open'); });
+    closeRowMenus();
 
     const b = id ? bookingList.find(function (x) { return x.id === id; }) : bookingList[bookingIndex];
     if (!b) return;
@@ -1417,6 +1518,10 @@ function toggleShowMore() {
 }
 
 document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && activeRowMenu) {
+        closeRowMenus();
+        return;
+    }
     if (document.getElementById('rsModal').style.display === 'flex') {
         if (e.key === 'Escape') {
             closeReschedule();
