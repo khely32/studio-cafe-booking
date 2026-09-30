@@ -72,6 +72,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/bookings', [AdminController::class, 'bookings'])->name('bookings');
     Route::get('/bookings/{booking}', [AdminController::class, 'bookingDetail'])->name('booking.detail');
+    Route::get('/bookings/{booking}/slots', [AdminController::class, 'bookingSlots'])->name('booking.slots');
+    Route::patch('/bookings/{booking}/reschedule', [AdminController::class, 'reschedule'])->name('booking.reschedule');
     Route::patch('/bookings/{booking}/status', [AdminController::class, 'updateStatus'])->name('booking.update');
     Route::patch('/bookings/{booking}/note', [AdminController::class, 'updateNote'])->name('booking.note');
     Route::delete('/bookings/{booking}', [AdminController::class, 'destroy'])->name('booking.delete');

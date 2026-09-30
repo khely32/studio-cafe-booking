@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Service;
+use App\Support\StudioSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -43,11 +44,13 @@ class AdminController extends Controller
         $hasDateRange = $request->filled('date_from') || $request->filled('date_to');
 
         if ($hasDateRange) {
+            // Cast to Carbon so the bound value is a full datetime; a bare "Y-m-d"
+            // string never compares correctly against the stored "Y-m-d H:i:s" value.
             if ($request->filled('date_from')) {
-                $query->where('booking_date', '>=', $request->date_from);
+                $query->where('booking_date', '>=', Carbon::parse($request->date_from)->startOfDay());
             }
             if ($request->filled('date_to')) {
-                $query->where('booking_date', '<=', $request->date_to);
+                $query->where('booking_date', '<=', Carbon::parse($request->date_to)->endOfDay());
             }
         } else {
             if ($filter === 'upcoming') {
@@ -115,6 +118,122 @@ class AdminController extends Controller
     {
         $booking->load('service', 'addons');
         return view('admin.detail', compact('booking'));
+    }
+
+    public function bookingSlots(Booking $booking, Request $request)
+    {
+        $booking->loadMissing('service');
+
+        $validated = $request->validate([
+            'date' => 'required|date|after_or_equal:today',
+        ]);
+
+        $date = Carbon::parse($validated['date'])->format('Y-m-d');
+
+        if (StudioSchedule::isClosed($date)) {
+            return response()->json([
+                'slots' => [],
+                'message' => 'The studio is closed on Sundays.',
+            ]);
+        }
+
+        return response()->json([
+            'slots' => StudioSchedule::slotsFor($booking->service, $date, $booking->id),
+            'studio_hours' => StudioSchedule::hoursLabel($date),
+            'day_label' => Carbon::parse($date)->format('l'),
+            'current_date' => $booking->booking_date->format('Y-m-d'),
+            'current_time' => Carbon::parse($booking->booking_time)->format('H:i'),
+        ]);
+    }
+
+    public function reschedule(Booking $booking, Request $request)
+    {
+        $booking->loadMissing('service');
+
+        $validated = $request->validate([
+            'booking_date' => 'required|date|after_or_equal:today',
+            'booking_time' => 'required|date_format:H:i',
+        ]);
+
+        $date = Carbon::parse($validated['booking_date'])->format('Y-m-d');
+        $time = $validated['booking_time'];
+
+        if (StudioSchedule::isClosed($date)) {
+            return $this->rescheduleFailure('The studio is closed on Sundays.', 422);
+        }
+
+        $slots = collect(StudioSchedule::slotsFor($booking->service, $date, $booking->id));
+
+        $slot = $slots->firstWhere('time', $time);
+
+        if ($slot === null) {
+            return $this->rescheduleFailure('That time is outside studio hours for this service.', 422);
+        }
+
+        if (! $slot['available']) {
+            return $this->rescheduleFailure('That slot was just taken. Please pick another time.', 409);
+        }
+
+        if ($date === Carbon::today()->format('Y-m-d')) {
+            $startsAt = Carbon::parse("{$date} {$time}");
+
+            if ($startsAt->lte(Carbon::now())) {
+                return $this->rescheduleFailure('That time has already passed today.', 422);
+            }
+        }
+
+        $unchanged = $booking->booking_date->format('Y-m-d') === $date
+            && Carbon::parse($booking->booking_time)->format('H:i') === $time;
+
+        if ($unchanged) {
+            return response()->json([
+                'success' => true,
+                'message' => 'This booking is already on that date and time.',
+                'data' => $this->reschedulePayload($booking),
+            ]);
+        }
+
+        $booking->update([
+            'booking_date' => $date,
+            'booking_time' => $time,
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Booking rescheduled.',
+                'data' => $this->reschedulePayload($booking->fresh()),
+            ]);
+        }
+
+        return redirect()->route('admin.bookings')->with('success', 'Booking rescheduled.');
+    }
+
+    private function reschedulePayload(Booking $booking): array
+    {
+        $duration = $booking->service->duration_minutes ?? 30;
+        $start = Carbon::parse($booking->booking_time);
+        $end = $start->copy()->addMinutes($duration);
+
+        return [
+            'id' => $booking->id,
+            'booking_date' => $booking->booking_date->format('Y-m-d'),
+            'date_label' => $booking->booking_date->format('D M j, Y'),
+            'date_full' => $booking->booking_date->format('l, F jS, Y'),
+            'start_time' => $start->format('g:i A'),
+            'end_time' => $end->format('g:i A'),
+            'start_iso' => $booking->booking_date->format('M j, Y') . ', ' . $start->format('g:i A'),
+            'end_iso' => $booking->booking_date->format('M j, Y') . ', ' . $end->format('g:i A'),
+        ];
+    }
+
+    private function rescheduleFailure(string $message, int $status)
+    {
+        if (request()->expectsJson()) {
+            return response()->json(['success' => false, 'message' => $message], $status);
+        }
+
+        return back()->with('error', $message);
     }
 
     public function updateNote(Booking $booking, Request $request)

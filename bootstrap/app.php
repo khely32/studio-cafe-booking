@@ -18,7 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Registering this callback REPLACES the handler's $request->expectsJson()
+        // fallback, so it has to be OR'd back in explicitly. Without it, a 422 from
+        // $request->validate() is turned into a 302 redirect for non-api routes.
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
+            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
     })->create();

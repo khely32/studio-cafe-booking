@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use App\Models\Addon;
 use App\Models\Booking;
+use App\Support\StudioSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
@@ -41,45 +42,14 @@ class BookingController extends Controller
 
         $service = Service::findOrFail($request->service_id);
         $date = $request->date;
-        $dayOfWeek = Carbon::parse($date)->dayOfWeek;
 
-        if ($dayOfWeek === 0) {
+        if (StudioSchedule::isClosed($date)) {
             return response()->json(['slots' => [], 'message' => 'Studio is closed on Sundays']);
         }
 
-        if ($dayOfWeek === 6) {
-            $startHour = 9;
-            $endHour = 12;
-        } else {
-            $startHour = 10;
-            $endHour = 17;
-        }
-
-        $bookedSlots = Booking::where('booking_date', $date)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->pluck('booking_time')
-            ->map(fn($time) => Carbon::parse($time)->format('H:i'))
-            ->toArray();
-
-        $slots = [];
-        $current = Carbon::parse("{$date} {$startHour}:00");
-        $closing = Carbon::parse("{$date} {$endHour}:00");
-
-        while ($current->copy()->addMinutes($service->duration_minutes)->lte($closing)) {
-            $timeStr = $current->format('H:i');
-            $endSlot = $current->copy()->addMinutes($service->duration_minutes);
-            $slots[] = [
-                'time' => $timeStr,
-                'display' => $current->format('g:i A'),
-                'end_display' => $endSlot->format('g:i A'),
-                'available' => !in_array($timeStr, $bookedSlots),
-            ];
-            $current->addMinutes(30);
-        }
-
         return response()->json([
-            'slots' => $slots,
-            'studio_hours' => $dayOfWeek === 6 ? '9:00 AM - 12:00 NN' : '10:00 AM - 5:00 PM',
+            'slots' => StudioSchedule::slotsFor($service, $date),
+            'studio_hours' => StudioSchedule::hoursLabel($date),
             'day_label' => Carbon::parse($date)->format('l'),
         ]);
     }
@@ -106,20 +76,11 @@ class BookingController extends Controller
                 continue;
             }
 
-            if ($date->dayOfWeek === 6) {
-                $startHour = 9;
-                $endHour = 12;
-            } else {
-                $startHour = 10;
-                $endHour = 17;
-            }
-
-            $bookedCount = Booking::where('booking_date', $date->format('Y-m-d'))
+            $bookedCount = Booking::whereDate('booking_date', $date->format('Y-m-d'))
                 ->whereIn('status', ['pending', 'confirmed'])
                 ->count();
 
-            $totalSlots = floor((($endHour - $startHour) * 60) / 30);
-            $hasAvailable = $bookedCount < $totalSlots;
+            $hasAvailable = $bookedCount < StudioSchedule::totalSlotCount($date->format('Y-m-d'));
 
             $dates[] = [
                 'date' => $date->format('Y-m-d'),
@@ -127,7 +88,7 @@ class BookingController extends Controller
                 'day_name' => $date->format('D'),
                 'available' => $hasAvailable,
                 'booked' => $bookedCount,
-                'total' => $totalSlots,
+                'total' => StudioSchedule::totalSlotCount($date->format('Y-m-d')),
             ];
         }
 

@@ -364,6 +364,91 @@
     .bm-side { width: 100%; border-left: none; border-top: 1px solid #E3DAC9; max-height: 40%; }
     .bm-grid3 { grid-template-columns: 1fr; }
 }
+
+/* ── Reschedule Dialog ── */
+.rs-overlay {
+    position: fixed; inset: 0; z-index: 9500;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+}
+.rs-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+.rs-modal {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 520px; max-height: 88vh;
+    display: flex; flex-direction: column;
+    background:#FAF8F5; border-radius: 20px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+    animation: bmIn 0.3s cubic-bezier(0.4,0,0.2,1) both;
+}
+.rs-head {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    padding: 22px 24px 16px; border-bottom: 1px solid #F0EAE1;
+}
+.rs-title { font-size: 18px; font-weight: 700; color: #2C221E; letter-spacing: -0.3px; }
+.rs-sub { font-size: 13px; color: #7A6E65; margin-top: 4px; }
+.rs-sub strong { color: #2C221E; font-weight: 600; }
+.rs-close {
+    width: 30px; height: 30px; flex-shrink: 0;
+    border-radius: 8px; border: 1px solid #E3DAC9; background:#FAF8F5;
+    color: #3D312A; font-size: 17px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.rs-close:hover { border-color: #2C221E; color: #2C221E; }
+
+.rs-body { padding: 20px 24px; overflow-y: auto; }
+.rs-field { margin-bottom: 16px; }
+.rs-field > label {
+    display: block; font-size: 12px; font-weight: 600; color: #7A6E65; margin-bottom: 6px;
+}
+.rs-field input[type="date"] {
+    width: 100%; padding: 9px 12px; box-sizing: border-box;
+    border: 1px solid #E3DAC9; border-radius: 8px;
+    font-size: 13px; font-family: inherit; color: #2C221E; background:#FAF8F5;
+}
+.rs-field input[type="date"]:focus {
+    outline: none; border-color: #2C221E; box-shadow: 0 0 0 3px rgba(26,59,50,0.12);
+}
+.rs-hint { font-size: 12px; color: #7A6E65; margin-top: 6px; }
+.rs-hint.error { color: #B91C1C; }
+
+.rs-slots {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    max-height: 260px; overflow-y: auto; padding: 2px;
+}
+.rs-slot {
+    padding: 9px 6px; border-radius: 10px;
+    border: 1px solid #E3DAC9; background:#FAF8F5;
+    font-size: 12px; font-weight: 600; color: #3D312A;
+    font-family: inherit; cursor: pointer; text-align: center;
+    transition: all 0.15s; line-height: 1.3;
+}
+.rs-slot:hover:not(:disabled) { border-color: #2C221E; background: #FAF7F2; }
+.rs-slot:disabled {
+    cursor: not-allowed; color: #B5A99F; background: #F0EAE1;
+    text-decoration: line-through; opacity: 0.7;
+}
+.rs-slot.active { background: #2C221E; border-color: #2C221E; color: #fff; }
+.rs-slot.active:hover { background: #2C221E; }
+.rs-slot.current { box-shadow: inset 0 0 0 1px #7A6E65; }
+.rs-slot-end { display: block; font-size: 10px; font-weight: 500; opacity: 0.7; margin-top: 1px; }
+
+.rs-foot {
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+    padding: 16px 24px 22px; border-top: 1px solid #F0EAE1;
+}
+.rs-note { margin-right: auto; font-size: 12px; color: #7A6E65; }
+.rs-note.error { color: #B91C1C; }
+.rs-note.ok { color: #15803D; }
+
+@media (max-width: 520px) {
+    .rs-slots { grid-template-columns: repeat(2, 1fr); }
+}
 </style>
 @endsection
 
@@ -486,8 +571,8 @@
                     <td style="width:4px;padding:0;">
                         <div class="bk-accent {{ $statusClass }}" id="row-accent-{{ $b->id }}"></div>
                     </td>
-                    <td><span class="td-date">{{ \Carbon\Carbon::parse($b->booking_date)->format('D M j, Y') }}</span></td>
-                    <td><span class="td-time">{{ \Carbon\Carbon::parse($b->booking_time)->format('g:i A') }}</span></td>
+                    <td><span class="td-date" id="row-date-{{ $b->id }}">{{ \Carbon\Carbon::parse($b->booking_date)->format('D M j, Y') }}</span></td>
+                    <td><span class="td-time" id="row-time-{{ $b->id }}">{{ \Carbon\Carbon::parse($b->booking_time)->format('g:i A') }}</span></td>
                     <td><span class="td-duration">{{ $durationFmt }}</span></td>
                     <td>
                         <div class="td-name">{{ $b->customer_name }} &amp; 56'30 Studio Cafe</div>
@@ -523,7 +608,7 @@
                                     Rebook
                                     <span class="crown-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18h20l-1.5-2H3.5L2 18zM4 16l1.5-8L10 11l2-5 2 5 4.5-3L20 16H4z"/></svg></span>
                                 </a>
-                                <a href="{{ $b->service ? route('booking.service', $b->service) : route('booking.index') }}">
+                                <a href="#" class="menu-reschedule" onclick="openReschedule({{ $b->id }}); return false;">
                                     <span class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>
                                     Reschedule
                                 </a>
@@ -565,6 +650,9 @@
             'rawStatus' => $b->status,
             'uiStatus' => $acc ? 'accepted' : ($can ? 'cancelled' : 'undecided'),
             'dateFull' => $b->booking_date->format('l, F jS, Y'),
+            'dateValue' => $b->booking_date->format('Y-m-d'),
+            'timeValue' => \Carbon\Carbon::parse($b->booking_time)->format('H:i'),
+            'whenShort' => $b->booking_date->format('D M j, Y') . ', ' . \Carbon\Carbon::parse($b->booking_time)->format('g:i A'),
             'duration' => $dur >= 60 ? floor($dur/60).' hour'.($dur>=120?'s':'').($dur%60 ? ' '.($dur%60).' minutes' : '') : $dur.' minutes',
             'startTime' => $start->format('g:i A'),
             'endTime' => $end->format('g:i A'),
@@ -717,7 +805,7 @@
                     Rebook
                     <span class="bm-crown"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18h20l-1.5-2H3.5L2 18zM4 16l1.5-8L10 11l2-5 2 5 4.5-3L20 16H4z"/></svg></span>
                 </a>
-                <a class="bm-action" id="bm-reschedule" href="#">
+                <a class="bm-action" id="bm-reschedule" href="#" onclick="openReschedule(); return false;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
                     Reschedule
                 </a>
@@ -760,6 +848,42 @@
 <form method="POST" id="bm-delete-form" style="display:none;">
     @csrf @method('DELETE')
 </form>
+
+{{-- Reschedule Dialog --}}
+<div id="rsModal" class="rs-overlay" style="display:none;">
+    <div class="rs-backdrop" onclick="closeReschedule()"></div>
+    <div class="rs-modal" role="dialog" aria-modal="true" aria-labelledby="rs-title">
+        <div class="rs-head">
+            <div>
+                <h2 class="rs-title" id="rs-title">Reschedule booking</h2>
+                <div class="rs-sub">
+                    <span id="rs-customer"></span> &middot; currently
+                    <strong id="rs-current"></strong>
+                </div>
+            </div>
+            <button type="button" class="rs-close" onclick="closeReschedule()" aria-label="Close">&times;</button>
+        </div>
+
+        <div class="rs-body">
+            <div class="rs-field">
+                <label for="rs-date">New date</label>
+                <input type="date" id="rs-date" onchange="loadRescheduleSlots()">
+                <div class="rs-hint" id="rs-hint">&nbsp;</div>
+            </div>
+
+            <div class="rs-field" style="margin-bottom:0;">
+                <label>Available time <span id="rs-hours" style="font-weight:500;text-transform:none;letter-spacing:0;"></span></label>
+                <div class="rs-slots" id="rs-slots"></div>
+            </div>
+        </div>
+
+        <div class="rs-foot">
+            <span class="rs-note" id="rs-note"></span>
+            <button type="button" class="btn btn-sm" onclick="closeReschedule()">Cancel</button>
+            <button type="button" class="btn btn-primary btn-sm" id="rs-save" onclick="submitReschedule()" disabled>Save new time</button>
+        </div>
+    </div>
+</div>
 
 <script>
 function togglePop(popId) {
@@ -824,7 +948,7 @@ function openBookingModal(id) {
 
 function closeBookingModal() {
     document.getElementById('bookingModal').style.display = 'none';
-    document.body.style.overflow = '';
+    syncBodyScroll();
 }
 
 function stepBooking(dir) {
@@ -871,7 +995,6 @@ function renderBooking() {
     document.getElementById('bm-end').textContent = b.endISO;
 
     document.getElementById('bm-rebook').href = b.serviceUrl;
-    document.getElementById('bm-reschedule').href = b.serviceUrl;
 
     document.getElementById('bm-notes').value = b.notes;
     document.getElementById('bm-saved').classList.remove('show');
@@ -969,6 +1092,249 @@ function toggleTimeline() {
     document.getElementById('bm-timeline').classList.toggle('open');
 }
 
+/* ── Reschedule Dialog ── */
+const rsState = { id: null, time: null };
+
+function csrfToken() {
+    const meta = document.querySelector('meta[name=csrf-token]');
+    return meta ? meta.content : '';
+}
+
+function todayISO() {
+    const d = new Date();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + m + '-' + day;
+}
+
+function openReschedule(id) {
+    document.querySelectorAll('.bk-menu-drop').forEach(function (m) { m.classList.remove('open'); });
+
+    const b = id ? bookingList.find(function (x) { return x.id === id; }) : bookingList[bookingIndex];
+    if (!b) return;
+
+    rsState.id = b.id;
+    rsState.time = null;
+
+    const modal = document.getElementById('rsModal');
+    const dateInput = document.getElementById('rs-date');
+    const today = todayISO();
+
+    dateInput.min = today;
+    dateInput.value = b.dateValue < today ? today : b.dateValue;
+
+    document.getElementById('rs-customer').textContent = b.title;
+    document.getElementById('rs-current').textContent = b.whenShort;
+    document.getElementById('rs-slots').innerHTML = '';
+    document.getElementById('rs-hours').textContent = '';
+    setRescheduleNote('', '');
+    setRescheduleHint(' ');
+
+    modal.style.display = 'flex';
+    syncBodyScroll();
+
+    loadRescheduleSlots();
+}
+
+function closeReschedule() {
+    document.getElementById('rsModal').style.display = 'none';
+    syncBodyScroll();
+    rsState.id = null;
+    rsState.time = null;
+}
+
+function syncBodyScroll() {
+    const detailsOpen = document.getElementById('bookingModal').style.display === 'flex';
+    const rescheduleOpen = document.getElementById('rsModal').style.display === 'flex';
+    document.body.style.overflow = (detailsOpen || rescheduleOpen) ? 'hidden' : '';
+}
+
+function setRescheduleNote(text, kind) {
+    const el = document.getElementById('rs-note');
+    el.textContent = text;
+    el.className = 'rs-note' + (kind ? ' ' + kind : '');
+}
+
+function setRescheduleHint(text, kind) {
+    const el = document.getElementById('rs-hint');
+    el.textContent = text || ' ';
+    el.className = 'rs-hint' + (kind ? ' ' + kind : '');
+}
+
+function rescheduleBusy(busy) {
+    const save = document.getElementById('rs-save');
+    save.disabled = busy || !rsState.time;
+    save.textContent = busy ? 'Saving...' : 'Save new time';
+}
+
+function loadRescheduleSlots() {
+    if (!rsState.id) return;
+
+    const date = document.getElementById('rs-date').value;
+    const grid = document.getElementById('rs-slots');
+    const save = document.getElementById('rs-save');
+
+    rsState.time = null;
+    save.disabled = true;
+    setRescheduleNote('', '');
+    setRescheduleHint(' ');
+    document.getElementById('rs-hours').textContent = '';
+
+    if (!date) {
+        grid.innerHTML = '';
+        setRescheduleHint('Pick a date to see available times.', 'error');
+        return;
+    }
+
+    grid.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:#7A6E65;padding:8px 2px;">Loading available times...</div>';
+
+    fetch(adminBookingsBase + '/' + rsState.id + '/slots?date=' + encodeURIComponent(date), {
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() }
+    }).then(function (r) {
+        if (!r.ok) throw new Error('slots failed');
+        return r.json();
+    }).then(function (data) {
+        renderRescheduleSlots(data);
+    }).catch(function () {
+        grid.innerHTML = '';
+        setRescheduleHint('Could not load available times. Please try again.', 'error');
+    });
+}
+
+function renderRescheduleSlots(data) {
+    const grid = document.getElementById('rs-slots');
+    const slots = data.slots || [];
+
+    if (data.message) {
+        grid.innerHTML = '';
+        setRescheduleHint(data.message, 'error');
+        return;
+    }
+
+    if (!slots.length) {
+        grid.innerHTML = '';
+        setRescheduleHint('No slots fit this service on that day.', 'error');
+        return;
+    }
+
+    document.getElementById('rs-hours').textContent = '(' + (data.studio_hours || '') + ')';
+
+    // Past slots only matter on the day actually being booked, not the booking's
+    // current day, so compare against the selected date.
+    const selectedDate = document.getElementById('rs-date').value;
+    const isToday = selectedDate === todayISO();
+    grid.innerHTML = '';
+
+    slots.forEach(function (slot) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'rs-slot';
+        btn.dataset.time = slot.time;
+        btn.innerHTML = slot.display + '<span class="rs-slot-end">' + slot.end_display + '</span>';
+
+        const isCurrent = slot.time === data.current_time && data.current_date === selectedDate;
+        if (isCurrent) btn.classList.add('current');
+
+        if (!slot.available) {
+            btn.disabled = true;
+            btn.title = 'Already booked';
+        } else if (isToday && slotPassed(slot.time)) {
+            btn.disabled = true;
+            btn.title = 'Time has already passed';
+        } else {
+            btn.addEventListener('click', function () {
+                selectRescheduleSlot(slot.time);
+            });
+        }
+
+        grid.appendChild(btn);
+    });
+}
+
+function slotPassed(time) {
+    const parts = time.split(':');
+    const target = new Date();
+    target.setHours(parseInt(parts[0], 10), parseInt(parts[1], 10), 0, 0);
+    return target.getTime() <= Date.now();
+}
+
+function selectRescheduleSlot(time) {
+    rsState.time = time;
+    document.querySelectorAll('#rs-slots .rs-slot').forEach(function (el) {
+        el.classList.toggle('active', el.dataset.time === time);
+    });
+    rescheduleBusy(false);
+    setRescheduleNote('', '');
+}
+
+function submitReschedule() {
+    if (!rsState.id || !rsState.time) return;
+
+    const date = document.getElementById('rs-date').value;
+    rescheduleBusy(true);
+    setRescheduleNote('Saving...', '');
+
+    fetch(adminBookingsBase + '/' + rsState.id + '/reschedule', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken()
+        },
+        body: JSON.stringify({ booking_date: date, booking_time: rsState.time })
+    }).then(function (r) {
+        return r.json().catch(function () {
+            throw new Error(r.ok ? 'bad response' : 'Request failed (' + r.status + ')');
+        }).then(function (body) {
+            if (!r.ok || !body.success) {
+                setRescheduleNote((body && body.message) || 'Could not reschedule. Please try again.', 'error');
+                rescheduleBusy(false);
+                return;
+            }
+
+            applyRescheduleResult(body.data, body.message);
+        });
+    }).catch(function (e) {
+        setRescheduleNote(e.message || 'Could not reschedule. Please try again.', 'error');
+        rescheduleBusy(false);
+    });
+}
+
+function applyRescheduleResult(data, message) {
+    const b = bookingList.find(function (x) { return x.id === rsState.id; });
+    if (b) {
+        b.dateValue = data.booking_date;
+        b.timeValue = toHHMM(data.start_time);
+        b.dateFull = data.date_full;
+        b.startTime = data.start_time;
+        b.endTime = data.end_time;
+        b.startISO = data.start_iso;
+        b.endISO = data.end_iso;
+        b.whenShort = data.date_label + ', ' + data.start_time;
+
+        const dateCell = document.getElementById('row-date-' + b.id);
+        const timeCell = document.getElementById('row-time-' + b.id);
+        if (dateCell) dateCell.textContent = data.date_label;
+        if (timeCell) timeCell.textContent = data.start_time;
+
+        if (bookingIndex >= 0 && bookingList[bookingIndex] && bookingList[bookingIndex].id === b.id) {
+            renderBooking();
+        }
+    }
+
+    setRescheduleNote(message || 'Booking rescheduled.', 'ok');
+    rescheduleBusy(false);
+    setTimeout(closeReschedule, 700);
+}
+
+function toHHMM(label) {
+    const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(String(label).trim());
+    if (!match) return label;
+    let hours = parseInt(match[1], 10) % 12;
+    if (/pm/i.test(match[3])) hours += 12;
+    return String(hours).padStart(2, '0') + ':' + match[2];
+}
+
 function resendNotifications() {
     const fb = document.getElementById('bm-feedback');
     fb.classList.add('show');
@@ -985,6 +1351,13 @@ function toggleShowMore() {
 }
 
 document.addEventListener('keydown', function (e) {
+    if (document.getElementById('rsModal').style.display === 'flex') {
+        if (e.key === 'Escape') {
+            closeReschedule();
+            return;
+        }
+        return;
+    }
     if (e.key === 'Escape' && document.getElementById('bookingModal').style.display === 'flex') {
         closeBookingModal();
     }
