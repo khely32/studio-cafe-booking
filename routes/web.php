@@ -28,26 +28,16 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/api/payment-reminders', function () {
-    $secret = env('VERCEL_CRON_SECRET');
-    if ($secret) {
-        abort_unless(request()->header('Authorization') === 'Bearer ' . $secret, 403);
-    }
+    $result = \App\Jobs\SendPaymentReminders::dispatchSync();
 
-    \App\Jobs\SendPaymentReminders::dispatchSync();
-
-    return response('OK');
-});
+    return response()->json($result);
+})->middleware('cron')->name('cron.payment-reminders');
 
 Route::get('/api/backup-db', function () {
-    $secret = env('VERCEL_CRON_SECRET');
-    if ($secret) {
-        abort_unless(request()->header('Authorization') === 'Bearer ' . $secret, 403);
-    }
-
     \App\Jobs\ExportDatabaseBackup::dispatchSync();
 
-    return response('OK');
-});
+    return response()->json(['status' => 'ok']);
+})->middleware('cron')->name('cron.backup-db');
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);

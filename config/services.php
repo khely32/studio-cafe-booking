@@ -41,4 +41,14 @@ return [
         'keep' => env('BACKUP_KEEP', 30),
     ],
 
+    /*
+     * Vercel only attaches the automatic "Authorization: Bearer <secret>" header
+     * to cron requests when the project variable is literally named CRON_SECRET,
+     * so that name is read first. VERCEL_CRON_SECRET is kept as a fallback for
+     * projects that already use it.
+     */
+    'cron' => [
+        'secret' => env('CRON_SECRET') ?: env('VERCEL_CRON_SECRET'),
+    ],
+
 ];

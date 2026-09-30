@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminAuth::class,
             'client' => \App\Http\Middleware\ClientAuth::class,
+            'cron' => \App\Http\Middleware\VerifyCronRequest::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

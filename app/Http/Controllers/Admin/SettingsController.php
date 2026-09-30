@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class SettingsController extends Controller
 {
@@ -63,20 +62,11 @@ class SettingsController extends Controller
                 ->with('warning', 'Reminders are currently disabled. Enable them first.');
         }
 
-        $days = max(1, (int) Setting::get('payment_reminder_days', '3'));
-        $today = Carbon::today();
+        $result = \App\Jobs\SendPaymentReminders::dispatchSync();
 
-        $count = Booking::whereIn('payment_status', ['pending', 'partial'])
-            ->whereNull('payment_reminder_sent_at')
-            ->where('booking_date', '>=', $today)
-            ->where('booking_date', '<=', $today->copy()->addDays($days))
-            ->whereNotNull('customer_email')
-            ->where('customer_email', '!=', '')
-            ->count();
-
-        \App\Jobs\SendPaymentReminders::dispatchSync();
+        $message = "Payment reminder run complete — {$result['sent']} sent, {$result['failed']} failed.";
 
         return redirect()->route('admin.settings.reminders')
-            ->with('success', "Payment reminder run complete — sent to {$count} booking(s).");
+            ->with($result['failed'] > 0 ? 'warning' : 'success', $message);
     }
 }

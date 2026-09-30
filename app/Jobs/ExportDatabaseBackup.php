@@ -2,18 +2,21 @@
 
 namespace App\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class ExportDatabaseBackup implements ShouldQueue
+/**
+ * Exports every table to a gzip JSON dump in a GitHub repo.
+ *
+ * Deliberately NOT ShouldQueue, for the same reason as SendPaymentReminders:
+ * QUEUE_CONNECTION is "database" with no worker on Vercel, so a queued dispatch
+ * would never run.
+ */
+class ExportDatabaseBackup
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
 
     public function handle(): void
     {
