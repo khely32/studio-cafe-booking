@@ -76,6 +76,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::patch('/bookings/{booking}/reschedule', [AdminController::class, 'reschedule'])->name('booking.reschedule');
     Route::patch('/bookings/{booking}/status', [AdminController::class, 'updateStatus'])->name('booking.update');
     Route::patch('/bookings/{booking}/note', [AdminController::class, 'updateNote'])->name('booking.note');
+    Route::post('/bookings/{booking}/resend', [AdminController::class, 'resendNotifications'])->name('booking.resend');
     Route::delete('/bookings/{booking}', [AdminController::class, 'destroy'])->name('booking.delete');
 
     Route::resource('pages', PageController::class);

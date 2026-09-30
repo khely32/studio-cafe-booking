@@ -355,8 +355,10 @@
 .bm-timeline.open { display: block; }
 .bm-saved { display: none; font-size: 12px; color: #15803D; font-weight: 600; }
 .bm-saved.show { display: inline; }
-.bm-feedback { display: none; font-size: 12px; color: #15803D; font-weight: 600; }
+.bm-feedback { display: none; font-size: 12px; color: #15803D; font-weight: 600; margin-top: 10px; }
 .bm-feedback.show { display: block; }
+.bm-feedback.pending { color: #7A6E65; }
+.bm-feedback.error { color: #B91C1C; }
 
 @media (max-width: 900px) {
     .bm-modal { flex-direction: column; height: 92vh; }
@@ -830,9 +832,9 @@
                             <div class="bm-resend-title">Resend notifications <span class="bm-crown"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18h20l-1.5-2H3.5L2 18zM4 16l1.5-8L10 11l2-5 2 5 4.5-3L20 16H4z"/></svg></span></div>
                         </div>
                     </div>
-                    <div class="bm-resend-sub">Resend emails, SMS, and webhooks</div>
+                    <div class="bm-resend-sub" id="bm-resend-sub">Resend confirmation email</div>
                     <div style="margin-top:12px;">
-                        <button type="button" class="btn btn-primary btn-sm" style="width:100%;" onclick="resendNotifications()">Resend now</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="bm-resend-btn" style="width:100%;" onclick="resendNotifications()">Resend now</button>
                     </div>
                     <div class="bm-feedback" id="bm-feedback">Notifications resent successfully.</div>
                 </div>
@@ -995,6 +997,24 @@ function renderBooking() {
     document.getElementById('bm-end').textContent = b.endISO;
 
     document.getElementById('bm-rebook').href = b.serviceUrl;
+
+    const resendBtn = document.getElementById('bm-resend-btn');
+    if (resendBtn) {
+        resendBtn.disabled = false;
+        resendBtn.textContent = 'Resend now';
+    }
+    const resendFb = document.getElementById('bm-feedback');
+    if (resendFb) {
+        clearTimeout(resendFb._t);
+        resendFb.classList.remove('show');
+    }
+
+    const resendSub = document.getElementById('bm-resend-sub');
+    if (resendSub) {
+        resendSub.textContent = b.email
+            ? 'Resend confirmation email to ' + b.email
+            : 'No email address on file for this booking';
+    }
 
     document.getElementById('bm-notes').value = b.notes;
     document.getElementById('bm-saved').classList.remove('show');
@@ -1336,10 +1356,56 @@ function toHHMM(label) {
 }
 
 function resendNotifications() {
+    const b = bookingList[bookingIndex];
+    if (!b) return;
+
+    const btn = document.getElementById('bm-resend-btn');
     const fb = document.getElementById('bm-feedback');
-    fb.classList.add('show');
-    fb.textContent = 'Notifications resent successfully.';
-    setTimeout(function () { fb.classList.remove('show'); }, 3000);
+    const sentId = b.id;
+
+    // If the admin navigates to a different booking mid-request, drop the result
+    // instead of reporting another customer's send on the wrong panel.
+    const stillViewing = function () {
+        const cur = bookingList[bookingIndex];
+        return cur && cur.id === sentId;
+    };
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    showResendFeedback(b.email ? 'Sending confirmation email to ' + b.email + '...' : 'Sending confirmation email...', 'pending');
+
+    fetch(adminBookingsBase + '/' + b.id + '/resend', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken()
+        }
+    }).then(function (r) {
+        return r.json().catch(function () {
+            throw new Error(r.ok ? 'Could not read the server response.' : 'Request failed (' + r.status + ').');
+        }).then(function (body) {
+            if (!r.ok || !body.success) {
+                throw new Error((body && body.message) || 'Could not resend the notification.');
+            }
+            if (!stillViewing()) return;
+            showResendFeedback(body.message, 'ok');
+        });
+    }).catch(function (e) {
+        if (!stillViewing()) return;
+        showResendFeedback(e.message || 'Could not resend the notification.', 'error');
+    }).then(function () {
+        if (!stillViewing()) return;
+        btn.disabled = false;
+        btn.textContent = 'Resend now';
+    });
+}
+
+function showResendFeedback(text, kind) {
+    const fb = document.getElementById('bm-feedback');
+    clearTimeout(fb._t);
+    fb.textContent = text;
+    fb.className = 'bm-feedback show' + (kind && kind !== 'pending' ? ' ' + kind : '');
+    fb._t = setTimeout(function () { fb.classList.remove('show'); }, 6000);
 }
 
 function toggleShowMore() {

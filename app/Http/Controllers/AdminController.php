@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingConfirmation;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Support\StudioSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -118,6 +121,67 @@ class AdminController extends Controller
     {
         $booking->load('service', 'addons');
         return view('admin.detail', compact('booking'));
+    }
+
+    /**
+     * Resend the booking confirmation email for a single booking.
+     *
+     * Sent synchronously (not queued) so the admin gets a truthful success or
+     * failure back. The "log" mail driver is reported as a failure rather than a
+     * silent success, because it writes to the log instead of delivering.
+     */
+    public function resendNotifications(Booking $booking)
+    {
+        $booking->loadMissing('service');
+
+        $recipient = trim((string) $booking->customer_email);
+
+        if ($recipient === '' || ! filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
+            return response()->json([
+                'success' => false,
+                'message' => $recipient === ''
+                    ? 'This booking has no email address on file.'
+                    : "This booking has an invalid email address ({$recipient}).",
+            ], 422);
+        }
+
+        $mailer = config('mail.default');
+
+        if ($mailer === 'log' || $mailer === 'array') {
+            return response()->json([
+                'success' => false,
+                'message' => "Mail is not configured for delivery (MAIL_MAILER={$mailer}). Emails are only written to the log.",
+                'mailer' => $mailer,
+            ], 503);
+        }
+
+        try {
+            Mail::to($recipient)->send(new BookingConfirmation($booking));
+        } catch (\Throwable $e) {
+            report($e);
+
+            Log::error("Resend failed for {$booking->booking_ref} <{$recipient}> via {$mailer}: " . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Could not send the email: ' . $e->getMessage(),
+                'mailer' => $mailer,
+            ], 502);
+        }
+
+        Log::info("Resent booking confirmation for {$booking->booking_ref} to <{$recipient}> via {$mailer}");
+
+        return response()->json([
+            'success' => true,
+            'message' => "Confirmation email sent to {$recipient}.",
+            'data' => [
+                'id' => $booking->id,
+                'ref' => $booking->booking_ref,
+                'email' => $recipient,
+                'mailer' => $mailer,
+                'sent_at' => now()->toDateTimeString(),
+            ],
+        ]);
     }
 
     public function bookingSlots(Booking $booking, Request $request)
