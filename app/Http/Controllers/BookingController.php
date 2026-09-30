@@ -26,7 +26,7 @@ class BookingController extends Controller
             'id' => $service->id,
             'name' => $service->name,
             'description' => $service->description,
-            'price' => number_format($service->price, 2),
+            'price' => (float) $service->price,
             'duration' => $service->duration_label,
             'max_pax' => $service->max_pax,
             'image' => $service->image,
