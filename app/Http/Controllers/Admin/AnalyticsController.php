@@ -130,17 +130,24 @@ class AnalyticsController extends Controller
                 'count' => $row->count,
             ]);
 
-        // Bookings by day of week (MySQL compatible)
-        $dayOfWeek = Booking::selectRaw("DAYOFWEEK(booking_date) as day, count(*) as count")
-            ->groupBy('day')
-            ->orderBy('day')
-            ->pluck('count', 'day')
-            ->toArray();
+        // Bookings by day of week.
+        // Production runs PostgreSQL (Neon) while local dev is MySQL, so
+        // DAYOFWEEK() is not portable. Group by the plain date and derive the
+        // weekday in PHP instead: booking_date is a DATE column, so the number
+        // of groups stays small.
+        $countsByDate = Booking::selectRaw('booking_date, count(*) as count')
+            ->groupBy('booking_date')
+            ->pluck('count', 'booking_date');
+
+        $countsByWeekday = array_fill(0, 7, 0);
+        foreach ($countsByDate as $date => $count) {
+            $countsByWeekday[Carbon::parse($date)->dayOfWeek] += (int) $count;
+        }
 
         $dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        $bookingsByDay = collect($dayLabels)->map(function ($label, $index) use ($dayOfWeek) {
-            $mysqlDay = $index + 1; // MySQL DAYOFWEEK: 1=Sun, 2=Mon, ...
-            return ['day' => $label, 'count' => $dayOfWeek[$mysqlDay] ?? 0];
+        $bookingsByDay = collect($dayLabels)->map(function ($label, $index) use ($countsByWeekday) {
+            // Carbon::dayOfWeek is 0=Sunday, which lines up with $dayLabels.
+            return ['day' => $label, 'count' => $countsByWeekday[$index]];
         })->toArray();
 
         return view('admin.analytics.index', compact(
