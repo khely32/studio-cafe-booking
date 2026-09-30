@@ -619,7 +619,7 @@
                                     <span class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
                                     Cancel
                                 </a>
-                                <a href="{{ $b->service ? route('booking.service', $b->service) : route('booking.index') }}">
+                                <a href="{{ $b->service ? route('booking.index', ['service' => $b->service_id]) : route('booking.index') }}">
                                     <span class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></span>
                                     Rebook
                                     <span class="crown-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18h20l-1.5-2H3.5L2 18zM4 16l1.5-8L10 11l2-5 2 5 4.5-3L20 16H4z"/></svg></span>
@@ -679,7 +679,7 @@
             'price' => number_format($b->total_amount ?? 0, 2),
             'maxPax' => $b->num_pax,
             'ref' => $b->booking_ref,
-            'serviceUrl' => $b->service ? route('booking.service', $b->service) : route('booking.index'),
+            'serviceUrl' => $b->service ? route('booking.index', ['service' => $b->service_id]) : route('booking.index'),
             'notes' => $b->internal_notes ?? '',
             'paymentMethod' => strtoupper($b->payment_method ?? 'N/A'),
             'paymentStatus' => ucfirst($b->payment_status ?? 'unpaid'),

@@ -517,5 +517,19 @@
             else { err.textContent = res.message || 'Something went wrong.'; err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Confirm Booking'; }
         } catch(e) { err.textContent = 'Network error.'; err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Confirm Booking'; }
     }
+
+    // Preselect a package when arriving from the admin "Rebook" action,
+    // e.g. /booking?service=1. Reuses the card's own handler so the service
+    // data stays in one place instead of being duplicated here.
+    (function () {
+        const requested = new URLSearchParams(window.location.search).get('service');
+        // Guard the selector: an unvalidated value would be interpolated into
+        // querySelector() and could throw on a malformed attribute selector.
+        if (!requested || !/^\d+$/.test(requested)) return;
+        // Inactive or deleted packages are not rendered, so let the customer
+        // choose rather than silently dropping them on step 1.
+        const card = document.querySelector('.pkg-card[data-service-id="' + requested + '"]');
+        if (card) card.click();
+    })();
 </script>
 @endsection
