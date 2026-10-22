@@ -17,6 +17,7 @@
 .dg-title { font-size: 28px; font-weight: 800; color: #2D2621; letter-spacing: -0.4px; }
 .dg-sub { font-size: 14px; color: #7C7267; margin-top: 4px; }
 .dg-sub strong { font-weight: 700; color: #8C6D58; }
+.dg-clock { font-weight: 600; color: #A37B2C; }
 
 /* ── 3-card grid ── */
 .dg-grid {
@@ -148,10 +149,18 @@
 <div class="dash-page">
 
     {{-- Greeting --}}
+    @php
+        // Initial paint; the script below keeps it in sync with the client clock.
+        $hour = \Carbon\Carbon::now()->hour;
+        $greetingIcon = $hour < 12 ? '🌅' : ($hour < 17 ? '☀️' : ($hour < 22 ? '🌆' : '🌙'));
+    @endphp
     <div class="dg-head anim anim-d1">
         <div>
-            <h1 class="dg-title">Good evening, {{ $user->name }} 🌙</h1>
-            <p class="dg-sub">Welcome to <strong>56'30 Studio Cafe</strong> dashboard.</p>
+            <h1 class="dg-title">
+                <span id="dynamic-greeting" data-user="{{ $user->name }}">{{ $greeting }}, {{ $user->name }}</span>
+                <span id="dynamic-icon">{{ $greetingIcon }}</span>
+            </h1>
+            <p class="dg-sub">Welcome to <strong>56'30 Studio Cafe</strong> dashboard. <span id="realtime-clock" class="dg-clock"></span></p>
         </div>
     </div>
 
@@ -284,6 +293,63 @@
 </div>
 
 <script>
+/* ── Dynamic greeting + realtime clock ── */
+function updateDashboardTime() {
+    const now = new Date();
+    const hours = now.getHours();
+
+    const greetingElement = document.getElementById('dynamic-greeting');
+    const iconElement = document.getElementById('dynamic-icon');
+    const clockElement = document.getElementById('realtime-clock');
+
+    // 1. Dynamic greeting & icon based on the hour of the day.
+    let greeting = "Good evening";
+    let icon = "🌙";
+
+    if (hours >= 5 && hours < 12) {
+        greeting = "Good morning";
+        icon = "🌅";
+    } else if (hours >= 12 && hours < 17) {
+        greeting = "Good afternoon";
+        icon = "☀️";
+    } else if (hours >= 17 && hours < 22) {
+        greeting = "Good evening";
+        icon = "🌆";
+    } else {
+        greeting = "Good night";
+        icon = "🌙";
+    }
+
+    if (greetingElement) {
+        const userName = greetingElement.dataset.user || 'Admin';
+        greetingElement.textContent = `${greeting}, ${userName}`;
+    }
+    if (iconElement) iconElement.textContent = icon;
+
+    // 2. Realtime date & clock, e.g. "Thursday, October 22, 2026 • 09:11:05 AM".
+    const dateOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+    const formattedDate = now.toLocaleDateString('en-US', dateOptions);
+    const formattedTime = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    });
+
+    if (clockElement) {
+        clockElement.textContent = `— ${formattedDate} • ${formattedTime}`;
+    }
+}
+
+// Run on page load and keep it ticking.
+updateDashboardTime();
+setInterval(updateDashboardTime, 1000);
+
 function copyLink(url) {
     navigator.clipboard.writeText(url || window.location.origin).then(function() {
         var t = document.createElement('div');
