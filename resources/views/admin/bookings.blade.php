@@ -25,14 +25,27 @@
 .bk-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+    /* The .anim fadeUp animation leaves `transform: translateY(0)` on this
+       element, which creates a stacking context. Without an explicit
+       z-index the header and the table below it are both z-index:auto
+       stacking contexts and get painted in DOM order, so the table (and its
+       sticky thead) covered the filter popovers. Lifting the header keeps
+       the whole toolbar — popovers included — above the table, rows and
+       pagination bar. */
+    position: relative; z-index: 60;
+    /* Never clip the absolutely positioned popovers. */
+    overflow: visible;
 }
 .bk-header h1 { font-size: 26px; font-weight: 700; color: #2C221E; letter-spacing: -0.4px; }
-.bk-header-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bk-header-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; overflow: visible; }
 
 .bk-controls {
     display: flex; align-items: center;
     border: 1px solid #E3DAC9; border-radius: 100px;
     background:#FAF8F5; overflow: visible; position: relative;
+    /* Own stacking context so the popovers always paint above the
+       surrounding controls and the table beneath them. */
+    z-index: 70;
     box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 .bk-controls .ctl-btn {
@@ -53,10 +66,14 @@
 
 /* Filter / date-range popovers */
 .bk-pop {
+    /* Anchored to .bk-controls (position: relative) so the panel drops
+       directly below the Filters button instead of drifting. */
     position: absolute; top: calc(100% + 10px); left: 0;
     background:#FAF8F5; border: 1px solid #E3DAC9; border-radius: 14px;
     box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-    padding: 16px; min-width: 240px; z-index: 300;
+    padding: 16px; min-width: 240px;
+    /* Floats above the table header, table rows and the pagination bar. */
+    z-index: 9999;
     display: none;
 }
 .bk-pop.open { display: block; }
@@ -86,6 +103,9 @@
 .bk-pagination {
     display: flex; align-items: center; justify-content: flex-end; gap: 12px;
     margin-bottom: 16px;
+    /* Explicitly below the filter toolbar so its popovers are never
+       covered by the pagination controls. */
+    position: relative; z-index: 10;
 }
 .bk-pagination .pg-text { font-size: 13px; color: #7A6E65; }
 .bk-pagination .pg-arrows { display: flex; gap: 4px; }
@@ -111,6 +131,9 @@
     overflow-x: auto;
     overscroll-behavior: contain;
     scrollbar-gutter: stable;
+    /* Explicitly below the filter toolbar (z-index 60) so the sticky table
+       header can never paint over the open filter popovers. */
+    position: relative; z-index: 1;
 }
 .bk-table { width: 100%; border-collapse: collapse; }
 .bk-table thead th {
